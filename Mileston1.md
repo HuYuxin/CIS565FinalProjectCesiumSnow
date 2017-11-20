@@ -10,12 +10,12 @@ In this milestone we have achieved a simple snow rendering on terrain by applyin
 
 **Snow Material on Terrain**
 
-* We made use of material feature implemented in Cesium. We created a new snow material, and set the diffuse color of the material to be vec3(0.8,0.8,0.9), then set the alpha value to be dot product between surface normal in world space and y-axis of world. The idea comes from the paper Real-time rendering of accumulated snow by Ohlsson, P. and Seipel, S. In their paper, they have presented a method to determine the color of vertices by linear interpolating between vertex color and snow color:
+* We made use of material feature implemented in Cesium. We created a new snow material, and set the diffuse color of the material to be vec3(0.8,0.8,0.9), then set the alpha value to be dot product between surface normal in world space and y-axis of world. The idea comes from the paper [Real-time rendering of accumulated snow by Ohlsson, P. and Seipel, S](http://www.ep.liu.se/ecp/013/007/ecp01307.pdf)  In their paper, they have presented a method to determine the color of vertices by linear interpolating between vertex color and snow color:
 
 ![](/image/FullSnowEquation.PNG)
 <p>Figure 1. color of accumulated snow by Ohlsson, P. and Seipel</p>
 
-Where the fp indicates the amount of snow that could cover this vertex. fp is determined by:
+Where the fp indicates the probability of snow covering this vertex. fp is determined by:
 
 ![](/image/SnowAccumulatePredictionFuntion.PNG)
 <p>Figure 2. snow accumulation prediction function by Ohlsson, P. and Seipel</p>
@@ -58,6 +58,8 @@ Then we can play with the parameters to change the snow effect.
 
 * Ray Marching (coming soon)
 In fragment shader, implementing ray marching based on the gbuffer to determine what color and terrain geometry to “color” on screen. Currently, we only have a sphere at the center of the scene.
+
+![](/image/SnowParticleRayMarching.png)
 
 Ultimately, the algorithm should be:
 ```
