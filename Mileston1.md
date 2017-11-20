@@ -13,26 +13,26 @@ In this milestone we have achieved a simple snow rendering on terrain by applyin
 * We made use of material feature implemented in Cesium. We created a new snow material, and set the diffuse color of the material to be vec3(0.8,0.8,0.9), then set the alpha value to be dot product between surface normal in world space and y-axis of world. The idea comes from the paper Real-time rendering of accumulated snow by Ohlsson, P. and Seipel, S. In their paper, they have presented a method to determine the color of vertices by linear interpolating between vertex color and snow color:
 
 ![](/image/FullSnowEquation.PNG)
-<p>color of accumulated snow by Ohlsson, P. and Seipel</p>
+<p>Figure 1. color of accumulated snow by Ohlsson, P. and Seipel</p>
 
 Where the fp indicates the amount of snow that could cover this vertex. fp is determined by:
 
 ![](/image/SnowAccumulatePredictionFuntion.PNG)
-<p>snow accumulation prediction function by Ohlsson, P. and Seipel</p>
+<p>Figure 2. snow accumulation prediction function by Ohlsson, P. and Seipel</p>
 
 fe stands for exposure component, and finc stands for snow contribution due to inclination. In our first milestone we have focused on finc term. The more inclined the terrain is, the less snow accumulated on. This can be shown in the image below:
 
 ![](/image/SnowAccumulationFunctionInclined.PNG)
-<p>Inclined surface by Ohlsson, P. and Seipel</p>
+<p>Figure 3. Inclined surface by Ohlsson, P. and Seipel</p>
 
 The cos angle is a good representation of how steep a vertex is. The final form of finc term is:
 
 ![](/image/SnowAccumulationFuncInclinedEquation.PNG)
-<p>Inclined Term by Ohlsson, P. and Seipel</p>
+<p>Figure 4. Inclined Term by Ohlsson, P. and Seipel</p>
 
 Inside czm_materialInput object, it stores a value slope. It is the absolute value of dot product between up vector in world and normal of the vertex, both in model space, which is the cos term in finc. We set the alpha value of material to be value of slope. Inside GlobeFS.glsl it is linearly blending terrain original color and snow material diffuse color by amount of alpha. In our case it would be 
 
-'''finalColor = (1-slope)*originalColor + slope*snowColor 
+**finalColor = (1-slope) * originalColor + slope * snowColor** 
 
 Here is a result of snow material:
 ![Grand Canyon Without Snow](/image/GrandCanyonNoSnow17Nov.PNG)  |  ![Grand Canyon With Snow](/image/GrandCanyonWithSnow.PNG)
