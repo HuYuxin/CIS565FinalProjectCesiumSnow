@@ -38,6 +38,41 @@ Here is a result of snow material:
 ![Grand Canyon Without Snow](/image/GrandCanyonNoSnow17Nov.PNG)  |  ![Grand Canyon With Snow](/image/GrandCanyonWithSnow.PNG)
 
 **Snow Falling Particles**
+* Snow Falling on Screen Space
+The falling snow are rendered based on the combination of:
+1) Assigned fall speed;
+2) Sin function based on system time to create wind effect;
+3) Gray noise image with ray intersection point and wind direction to determine the alpha channel of snow in that pixel;
+
+After the ray marching of every pixel, calculate the alpha channel color based on the ideas given above, and linearly interpolate white color and the background color based on the value of the alpha channel.
+
+Then we can play with the parameters to change the snow effect.
+![](/image/snow1.gif)
+<p>Heavy snow</p>
+
+![](/image/snow2.gif)
+<p>Light snow</p>
+
+![](/image/snow3.gif)
+<p>Accelerated heavy snow</p>
+
+* Ray Marching (coming soon)
+In fragment shader, implementing ray marching based on the gbuffer to determine what color and terrain geometry to “color” on screen. Currently, we only have a sphere at the center of the scene.
+
+Ultimately, the algorithm should be:
+```
+if (ray intersects with some geometry before t reaches maximum)
+{
+	calculate the intersection point
+	calculate the length between the origin and intersection point
+	color the pixel based on the terrain material color (we have a sphere in the scene right now)
+}else
+{
+	set the distance between the intersection point and ray origin to be tmax
+	color the pixel based on the material of sky
+}
+```
+
 
 ### Plans for future milestones
 
@@ -58,6 +93,14 @@ Initially we calculate the finc term by calculating dot product of normalEC and 
 
 ### References
 
-Ohlsson, P. and Seipel, S., 2004, November. Real-time rendering of accumulated snow. In The Annual SIGRAD Conference. Special Theme-Environmental Visualization (No. 013, pp. 25-31). Linköping University Electronic Press.
+1. Ohlsson, P. and Seipel, S., 2004, November. Real-time rendering of accumulated snow. In The Annual SIGRAD Conference. Special Theme-Environmental Visualization (No. 013, pp. 25-31). Linköping University Electronic Press.
+
+2. CIS 565 Fall 2015 https://github.com/CIS565-Fall-2015/Project5-GLSL-Ray-Marcher#resources
+
+3. Shadertoy snow https://www.shadertoy.com/view/ltfGzn
+
+
+
+
 
 
