@@ -7,8 +7,8 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	//Added by Yuxin For Test
 	//vec3 normal = normalize(materialInput.normalEC);
 	float snowSlope = materialInput.slope;
-	material.alpha = 1.0;
-	material.diffuse = vec3(1.0, 1.0, 1.0);
+	material.alpha = snowSlope;
+	material.diffuse = vec3(0.8, 0.8, 0.9);
 	//material.diffuse = materialInput.normalEC;
     //material.alpha = 1.0;
 	

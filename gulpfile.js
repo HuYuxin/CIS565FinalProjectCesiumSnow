@@ -29,8 +29,8 @@ var yargs = require('yargs');
 var aws = require('aws-sdk');
 var mime = require('mime');
 var compressible = require('compressible');
-
 var packageJson = require('./package.json');
+
 var version = packageJson.version;
 if (/\.0$/.test(version)) {
     version = version.substring(0, version.length - 2);
