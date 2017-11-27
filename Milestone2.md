@@ -22,7 +22,7 @@ The original terrain surface normal in eye space is:
 
 After we added noise to surface normal
 
-![](/image/NormalWithNoise4.PNG.PNG)
+![](/image/NormalWithNoise4.PNG)
 <p>Normal with noise in eye space</p>
 
 Here is a comparison of snow with and without noise added to surface normal:
