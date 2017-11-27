@@ -33,6 +33,11 @@
         <td>
             <input type="range" min="1.0" max="500.0" step="1.0" data-bind="value: spacing, valueUpdate: 'input'">
         </td>
+        <td><button onclick=
+            "getPerlinNoiseTexture();">Show Texture
+            </button>
+        </td>
+
     </tr>
 </tbody>
 </table>
@@ -59,6 +64,10 @@ var viewModel = {
     spacing: 100.0
 };
 
+var perlinNoiseImage = new Image();
+var perlinNoiseImageLoaded = false;
+preloadImage('../images/perlin_colors.png', function(){perlinNoiseImageLoaded = true; console.log("perlinNoiseImageLoaded is set to true");});
+
 function getColorRamp() {
     var ramp = document.createElement('canvas');
     ramp.width = 100;
@@ -75,6 +84,42 @@ function getColorRamp() {
     ctx.fillStyle = grd;
     ctx.fillRect(0, 0, 100, 1);
     return ramp;
+}
+
+
+function preloadImage(url, callback)
+{
+    console.log("preloadImage called" + url);
+    perlinNoiseImage.src=url;
+    perlinNoiseImage.onload = function(){
+        console.log("image loaded");
+        callback();
+    }
+}
+
+//Added by Yuxin
+function getPerlinNoiseTexture() {
+    var perlinNoise = document.createElement('canvas');
+    var context = perlinNoise.getContext('2d');
+    //context.beginPath();
+    //context.rect(0, 0, 512, 512);
+    //context.fillStyle = "red";
+    //context.fill();
+
+    /*var perlinNoiseImage = new Image();
+    perlinNoiseImage.src = '../images/perlin_colors.png';
+    perlinNoiseImage.onload = function(){
+        //context.drawImage(perlinNoiseImage, 0, 0, 512,512);
+        console.log("perlinNoise Image drawn");
+        callback(perlinNoiseImage);
+    }*/
+    //return perlinNoiseImage;
+    if(perlinNoiseImageLoaded){
+        context.drawImage(perlinNoiseImage, 0, 0, 512,512);
+        return perlinNoise;
+    }else{
+        alert("perlin noise texture not loaded!");
+    }
 }
 
 // Convert the viewModel members into knockout observables.
@@ -133,9 +178,12 @@ Sandcastle.addToolbarMenu([{
 }], 'terrainMenu');
 
 Sandcastle.addDefaultToolbarMenu([{
-    text : 'Mount Everest',
+    text : 'Grand Canyon',
     onselect : function() {
-        lookAtMtEverest();
+        var target = new Cesium.Cartesian3.fromDegrees(-112.1130, 36.1070, 2500);
+        var offset = new Cesium.Cartesian3(6344.974098678562, -793.3419798081741, 2499.950886076316);
+        viewer.camera.lookAt(target, offset);
+        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     }
 }, {
     text : 'Half Dome',
@@ -153,15 +201,13 @@ Sandcastle.addDefaultToolbarMenu([{
         viewer.camera.lookAt(target, offset);
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     }
-}, {
-    text : 'Grand Canyon',
+},{
+    text : 'Mount Everest',
     onselect : function() {
-        var target = new Cesium.Cartesian3.fromDegrees(-112.1130, 36.1070, 2500);
-        var offset = new Cesium.Cartesian3(6344.974098678562, -793.3419798081741, 2499.950886076316);
-        viewer.camera.lookAt(target, offset);
-        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+        lookAtMtEverest();
     }
-}], 'zoomButtons');
+}
+], 'zoomButtons');
 
 function lookAtMtEverest() {
     var target = new Cesium.Cartesian3(300770.50872389384, 5634912.131394585, 2978152.2865545116);
@@ -197,7 +243,7 @@ Sandcastle.addToolbarMenu([{
     text : 'Snow Material',
     onselect : function() {
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
-        viewer.scene.globe.material.uniforms.image = getColorRamp();
+        viewer.scene.globe.material.uniforms.image = getPerlinNoiseTexture();
     }
 }], 'materialMenu');
 
