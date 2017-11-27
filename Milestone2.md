@@ -44,6 +44,8 @@ Here is a comparison of snow with and without noise added to surface normal:
 
 ![](/image/mile2_2_Yaoyi.jpg)
 
+![](/image/GlobeFS_1_Yaoyi.gif)
+
 
 ### Plans for future milestones
 
