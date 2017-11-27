@@ -28,6 +28,14 @@ After we added noise to surface normal
 Here is a comparison of snow with and without noise added to surface normal:
 ![](/image/SnowWithouNormalNoise.PNG)  |  ![](/image/SnowWithNormalNoise3.PNG)
 
+**Snow Falling Particles As Post Processing Layer**
+
+* We tried to integrate the snow falling particles we implemented in shader toy in our last milestone(https://github.com/HuYuxin/CIS565FinalProjectCesiumSnow/blob/YuxinBranch/Mileston1.md) as a post processing layer to our snow accumulated rendering. As a simple test we implemented the ray marching and snow rendering inside snow material. To test we temporarily turned snow flake color from white to red. It may look weird that you only see red color mountain instead of red color snow flake for now, but we will bring the snowflake to screen soon :)
+
+![](/image/mile2_1.jpg)
+
+![](/image/mile2_2.jpg)
+
 
 ### Plans for future milestones
 
