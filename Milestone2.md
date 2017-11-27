@@ -51,7 +51,7 @@ Here is a comparison of snow with and without noise added to surface normal:
 
 * Milestone 3: Integrate the snow particle rendering in Cesium. Make the snow particle render modifiable through the website.
 
-* Milestone 4: ???
+* Milestone 4: Add the option to toggle noise in normal and slope to show the difference. Add the option to change how heavy the snow looks like, and add any wind forces to snow.
 
 ### References
 
