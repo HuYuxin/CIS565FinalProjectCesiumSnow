@@ -30,7 +30,7 @@ Here is a comparison of snow with and without noise added to surface normal:
 
 **Snow Falling Particles As Post Processing Layer**
 
-* We tried to integrate the snow falling particles we implemented in shader toy in our last milestone(https://github.com/HuYuxin/CIS565FinalProjectCesiumSnow/blob/YuxinBranch/Mileston1.md) as a post processing layer to our snow accumulated rendering. As a simple test we implemented the ray marching and snow rendering inside snow material. To test we temporarily turned snow flake color from white to red. It may look weird that you only see red color mountain instead of red color snow flake for now, but we will bring the snowflake to screen soon :)
+* We tried to integrate the snow falling particles we implemented in shader toy in our last milestone(https://github.com/HuYuxin/CIS565FinalProjectCesiumSnow/blob/YuxinBranch/Mileston1.md) as a post processing layer to our snow accumulated rendering. As a simple test we implemented the ray marching and snow rendering inside snow material. To test we temporarily turned snow flake color from white to red. It may look weird that you only see red color mountain instead of red color snow flake for now. The reason we had red mountain is that: first, I coded inside the wrong shader. I should add snow falling effect in the fragment shader, but I added it in the "snow material shader". Therefore, the snow falling effect is only rendered on the material texture of the terrain rather than on the screen. Currently I am working on adding the effect in the real fragment shader "GlobeFS.glsl" file, and the snow falling effect is coming soon.
 
 ![](/image/mile2_1.jpg)
 
