@@ -9,7 +9,7 @@ In this milestone we added noise to terrain surface normal to get a more realist
 ### Features Implemented
 **Perlin Noise Generation**
 
-* We needed perlin noise in both slope and surface normal. To better understand how perlin noise works, we wrote a function to generate and plot 1D perlin noise.
+* We needed perlin noise in both slope and surface normal. To better understand how perlin noise works, we wrote a function to generate and plot 1D perlin noise.  This is 3 tiles of Perlin noise that uses a cos smoothing function and includes 6 octaves.
 
 ![](/image/perlinNoise1D_Anton.png)
 
