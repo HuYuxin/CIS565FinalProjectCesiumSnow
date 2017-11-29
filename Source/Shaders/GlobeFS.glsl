@@ -192,9 +192,11 @@ void main()
 #ifdef APPLY_MATERIAL
     czm_materialInput materialInput;
     materialInput.st = v_textureCoordinates.st;
+    materialInput.str = vec3(gl_FragCoord.xy/ czm_viewport.zw, 1.0);
     materialInput.normalEC = normalize(v_normalEC);
     materialInput.slope = v_slope;
     materialInput.height = v_height;
+    materialInput.positionToEyeEC = v_positionEC;
     czm_material material = czm_getMaterial(materialInput);
     color.xyz = mix(color.xyz, material.diffuse, material.alpha);
 #endif

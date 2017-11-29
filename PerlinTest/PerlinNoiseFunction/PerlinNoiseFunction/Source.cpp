@@ -5,9 +5,9 @@ float noise(int x);
 float lerp(float val1, float val2, float t);
 float coslerp(float val1, float val2, float t);
 constexpr int TILESIZE{ 1 << 8 };
-constexpr int startStride{ 1 << 6};
+constexpr int startStride{ 1 << 7};
 constexpr int StrideStep{ 2 };
-constexpr int endStride{ 1<< 1 };
+constexpr int endStride{ 1<< };
 constexpr int NumberTiles{ 3 };
 constexpr int LENGTH{ TILESIZE * NumberTiles };
 float persistance{ 0.5f };
@@ -89,6 +89,6 @@ void interpolateStrideValues(float * start, int startindex, float startval, int 
 	for (int i{ startindex }; i < lastP1; ++i)
 	{
 		float t{ (i - startindex) / diffVal };
-		*(start + i) += amp * coslerp(startval, endVal, t);
+		*(start + i) += amp * lerp(startval, endVal, t);
 	}
 }
