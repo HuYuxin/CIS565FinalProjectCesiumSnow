@@ -66,7 +66,7 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	material.alpha = snowSlope;
 	// eye coordinate
 	vec2  posCoord = materialInput.str.xy;
-	float alfa = noise( materialInput.str.xy
+	//float alfa = noise( materialInput.str.xy
 	vec3 color =texture2D(image,  materialInput.str.xy).rgb;
 	material.diffuse = vec3(0.8, 0.8, 0.9);
 	//material.diffuse = materialInput.normalEC;
