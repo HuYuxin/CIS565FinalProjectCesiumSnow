@@ -16,7 +16,6 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
     mat3 tangentToEye = materialInput.tangentToEyeMatrix;
     material.normal  = tangentToEye * normalMapNormal;
     material.specular = 0.9;
-
     return material;
 }
 
