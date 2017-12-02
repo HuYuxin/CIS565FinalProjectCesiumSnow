@@ -20,8 +20,15 @@ float fade(float t) {
   // return t*t*(3.0-2.0*t); // Old fade, yields discontinuous second derivative
   return t*t*t*(t*(t*6.0-15.0)+10.0); // Improved fade, yields C2-continuous noise
 }
- 
+// Scale is the extent of the square over which the noise repeats
 #define SCALE 1000
+//ImageSize is the size of the image used for Random noise
+#define ImageSize 256
+// Fraction Noise is the fraction of the noise to use to modify the
+// blend coefficient.
+#define FractionNoise 0.8
+#define persistance 0.5
+#define orders       3;
 /*
  * 2D classic Perlin noise. Fast, but less useful than 3D noise.
  */
@@ -55,7 +62,18 @@ float noise(vec2 P)
   // We're done, return the final noise value.
   return n_xy;
 }
-
+// returns the x - n * scale where n is the 
+// largest integer that keeps x positive
+// scale should be positive. 
+// 
+// takes the fractional part of pos ( pos - floor(pos))
+// which is guaranteed to be between 0 and 1 and scale it
+// by scale
+vec2  ScaleCoordinate(vec2 pos, float scale)
+{
+         return fract(pos) * scale;
+}
+      
 czm_material czm_getMaterial(czm_materialInput materialInput)
 {
     czm_material material = czm_getDefaultMaterial(materialInput);
@@ -65,9 +83,12 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	float snowSlope = materialInput.slope;
 	material.alpha = snowSlope;
 	// eye coordinate
-	vec2  posCoord = materialInput.str.xy;
-	//float alfa = noise( materialInput.str.xy
-	vec3 color =texture2D(image,  materialInput.str.xy).rgb;
+	vec2  posCoord = materialInput.positionToEyeEC.xz;
+	posCoord /= float(SCALE); 
+        vec2  posScaled = ScaleCoordinate(posCoord, float(ImageSize) );
+	float noiseval = noise(posScaled);
+        material.alpha += FractionNoise * noiseval;
+//	vec3 color =texture2D(image,  materialInput.str.xy).rgb;
 	material.diffuse = vec3(0.8, 0.8, 0.9);
 	//material.diffuse = materialInput.normalEC;
     //material.alpha = 1.0;
