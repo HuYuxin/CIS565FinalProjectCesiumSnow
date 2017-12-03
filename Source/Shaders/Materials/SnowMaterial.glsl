@@ -21,14 +21,15 @@ float fade(float t) {
   return t*t*t*(t*(t*6.0-15.0)+10.0); // Improved fade, yields C2-continuous noise
 }
 // Scale is the extent of the square over which the noise repeats
-#define SCALE 10000
+const  float SCALE = 10000.;
 //ImageSize is the size of the image used for Random noise
-#define ImageSize 256
+const float ImageSize = 256.;
 // Fraction Noise is the fraction of the noise to use to modify the
 // blend coefficient.
-#define FractionNoise 0.8
-#define persistance 0.5
-#define orders       3;
+const float FractionNoise = 0.4;
+const float persistance =  0.3;
+// orders are the number of orders to sum
+const float  orders = 2.;
 /*
  * 2D classic Perlin noise. Fast, but less useful than 3D noise.
  */
@@ -139,17 +140,15 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	// eye coordinate
 	//vec2  posCoord = materialInput.positionToEyeEC.xz;
 	vec3 posCoord = materialInput.positionToEyeEC.xzy;
-	posCoord /= float(SCALE);
-	float noiseval;
-       // float noiseval
-       // for (int i = 0; i < orders; ++i) 
-       {
+	posCoord /= SCALE;
+	float noiseval = 0.;
+        for(float idx = 0.; idx < orders; ++idx)
+        {
 	      // take multiples of the position coordinate
 	      // to sample different regions of the texture
-	      int i = 0;
-	      vec3 posScaled = float(i) * posCoord;
-	      float amplitude = pow (persistance, float(i));
-	      posScaled = amplitude * ScaleCoordinate(posCoord, float(ImageSize) );
+	      vec3 posScaled = idx * posCoord;
+	      float amplitude = pow (persistance, idx);
+	      posScaled = amplitude * ScaleCoordinate(posCoord, ImageSize);
 	      noiseval += noise(posScaled);
 	}
         material.alpha += FractionNoise * noiseval;
