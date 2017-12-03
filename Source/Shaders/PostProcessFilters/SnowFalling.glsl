@@ -149,12 +149,12 @@ vec3 renderEverything(vec2 offset)
         //pos and rayorigin and raydirection are all in camera space
         //pos = ray.origin + t * ray.direction;
         depth = length(posInCamera.xyz - ray.origin);
-        //col = vec3(1.0);
+        col = texture2D(u_colorTexture, v_textureCoordinates).rgb;
     }
     else
     {
         depth = tmax;
-    	//col = sky();
+    	col = texture2D(u_colorTexture, v_textureCoordinates).rgb;
     }
 
     //float cameraAboveHorizen = czm_viewerPositionWC.z;
@@ -188,6 +188,6 @@ void main(void)
     //gamma correct
     //col = pow(col,vec3(0.4545));
 
-    //gl_FragColor += vec4(col, 1.0);
-    gl_FragColor = mix(texture2D(u_colorTexture, v_textureCoordinates), vec4(col,1.0), 0.5);
+    gl_FragColor += vec4(col, 1.0);
+    //gl_FragColor = mix(texture2D(u_colorTexture, v_textureCoordinates), vec4(col,1.0), 0.5);
 }
