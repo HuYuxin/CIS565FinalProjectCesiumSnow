@@ -196,7 +196,8 @@ void main()
     materialInput.normalEC = normalize(v_normalEC);
     materialInput.slope = v_slope;
     materialInput.height = v_height;
-    materialInput.positionToEyeEC = v_positionEC;
+    // Here we pass the Model coordinate position in to see how that works
+    materialInput.positionToEyeEC = v_positionMC;
     czm_material material = czm_getMaterial(materialInput);
     color.xyz = mix(color.xyz, material.diffuse, material.alpha);
 #endif

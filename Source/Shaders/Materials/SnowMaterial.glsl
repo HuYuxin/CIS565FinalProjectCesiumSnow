@@ -21,7 +21,7 @@ float fade(float t) {
   return t*t*t*(t*(t*6.0-15.0)+10.0); // Improved fade, yields C2-continuous noise
 }
 // Scale is the extent of the square over which the noise repeats
-#define SCALE 1000
+#define SCALE 10000
 //ImageSize is the size of the image used for Random noise
 #define ImageSize 256
 // Fraction Noise is the fraction of the noise to use to modify the
@@ -62,6 +62,56 @@ float noise(vec2 P)
   // We're done, return the final noise value.
   return n_xy;
 }
+/*
+ * 3D classic noise. Slower, but a lot more useful than 2D noise.
+ */
+float noise(vec3 P)
+{
+  vec3 Pi = ONE*floor(P)+ONEHALF; // Integer part, scaled so +1 moves one texel
+                                  // and offset 1/2 texel to sample texel centers
+  vec3 Pf = fract(P);     // Fractional part for interpolation
+
+  // Noise contributions from (x=0, y=0), z=0 and z=1
+  float perm00 = texture2D(image, Pi.xy).a ;
+  vec3  grad000 = texture2D(image, vec2(perm00, Pi.z)).rgb * 4.0 - 1.0;
+  float n000 = dot(grad000, Pf);
+  vec3  grad001 = texture2D(image, vec2(perm00, Pi.z + ONE)).rgb * 4.0 - 1.0;
+  float n001 = dot(grad001, Pf - vec3(0.0, 0.0, 1.0));
+
+  // Noise contributions from (x=0, y=1), z=0 and z=1
+  float perm01 = texture2D(image, Pi.xy + vec2(0.0, ONE)).a ;
+  vec3  grad010 = texture2D(image, vec2(perm01, Pi.z)).rgb * 4.0 - 1.0;
+  float n010 = dot(grad010, Pf - vec3(0.0, 1.0, 0.0));
+  vec3  grad011 = texture2D(image, vec2(perm01, Pi.z + ONE)).rgb * 4.0 - 1.0;
+  float n011 = dot(grad011, Pf - vec3(0.0, 1.0, 1.0));
+
+  // Noise contributions from (x=1, y=0), z=0 and z=1
+  float perm10 = texture2D(image, Pi.xy + vec2(ONE, 0.0)).a ;
+  vec3  grad100 = texture2D(image, vec2(perm10, Pi.z)).rgb * 4.0 - 1.0;
+  float n100 = dot(grad100, Pf - vec3(1.0, 0.0, 0.0));
+  vec3  grad101 = texture2D(image, vec2(perm10, Pi.z + ONE)).rgb * 4.0 - 1.0;
+  float n101 = dot(grad101, Pf - vec3(1.0, 0.0, 1.0));
+
+  // Noise contributions from (x=1, y=1), z=0 and z=1
+  float perm11 = texture2D(image, Pi.xy + vec2(ONE, ONE)).a ;
+  vec3  grad110 = texture2D(image, vec2(perm11, Pi.z)).rgb * 4.0 - 1.0;
+  float n110 = dot(grad110, Pf - vec3(1.0, 1.0, 0.0));
+  vec3  grad111 = texture2D(image, vec2(perm11, Pi.z + ONE)).rgb * 4.0 - 1.0;
+  float n111 = dot(grad111, Pf - vec3(1.0, 1.0, 1.0));
+
+  // Blend contributions along x
+  vec4 n_x = mix(vec4(n000, n001, n010, n011),
+                 vec4(n100, n101, n110, n111), fade(Pf.x));
+
+  // Blend contributions along y
+  vec2 n_xy = mix(n_x.xy, n_x.zw, fade(Pf.y));
+
+  // Blend contributions along z
+  float n_xyz = mix(n_xy.x, n_xy.y, fade(Pf.z));
+
+  // We're done, return the final noise value.
+  return n_xyz;
+}
 // returns the x - n * scale where n is the 
 // largest integer that keeps x positive
 // scale should be positive. 
@@ -70,6 +120,10 @@ float noise(vec2 P)
 // which is guaranteed to be between 0 and 1 and scale it
 // by scale
 vec2  ScaleCoordinate(vec2 pos, float scale)
+{
+         return fract(pos) * scale;
+}
+vec3  ScaleCoordinate(vec3 pos, float scale)
 {
          return fract(pos) * scale;
 }
@@ -83,10 +137,21 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	float snowSlope = materialInput.slope;
 	material.alpha = snowSlope;
 	// eye coordinate
-	vec2  posCoord = materialInput.positionToEyeEC.xz;
-	posCoord /= float(SCALE); 
-        vec2  posScaled = ScaleCoordinate(posCoord, float(ImageSize) );
-	float noiseval = noise(posScaled);
+	//vec2  posCoord = materialInput.positionToEyeEC.xz;
+	vec3 posCoord = materialInput.positionToEyeEC.xzy;
+	posCoord /= float(SCALE);
+	float noiseval;
+       // float noiseval
+       // for (int i = 0; i < orders; ++i) 
+       {
+	      // take multiples of the position coordinate
+	      // to sample different regions of the texture
+	      int i = 0;
+	      vec3 posScaled = float(i) * posCoord;
+	      float amplitude = pow (persistance, float(i));
+	      posScaled = amplitude * ScaleCoordinate(posCoord, float(ImageSize) );
+	      noiseval += noise(posScaled);
+	}
         material.alpha += FractionNoise * noiseval;
 //	vec3 color =texture2D(image,  materialInput.str.xy).rgb;
 	material.diffuse = vec3(0.8, 0.8, 0.9);
