@@ -21,15 +21,15 @@ float fade(float t) {
   return t*t*t*(t*(t*6.0-15.0)+10.0); // Improved fade, yields C2-continuous noise
 }
 // Scale is the extent of the square over which the noise repeats
-const  float SCALE = 10000.;
+const  float SCALE = 100000.;
 //ImageSize is the size of the image used for Random noise
 const float ImageSize = 256.;
 // Fraction Noise is the fraction of the noise to use to modify the
 // blend coefficient.
 const float FractionNoise = 0.4;
-const float persistance =  0.3;
+const float persistance =  0.5;
 // orders are the number of orders to sum
-const float  orders = 2.;
+const float  orders = 5.;
 /*
  * 2D classic Perlin noise. Fast, but less useful than 3D noise.
  */
