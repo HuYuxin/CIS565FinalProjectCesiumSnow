@@ -1,4 +1,4 @@
-//uniform sampler2D u_colorTexture;
+uniform sampler2D u_colorTexture;
 uniform sampler2D u_texture;
 uniform sampler2D u_depthTexture;
 
@@ -188,5 +188,6 @@ void main(void)
     //gamma correct
     //col = pow(col,vec3(0.4545));
 
-    gl_FragColor = vec4(col, 1.0);
+    //gl_FragColor += vec4(col, 1.0);
+    gl_FragColor = mix(texture2D(u_colorTexture, v_textureCoordinates), vec4(col,1.0), 0.5);
 }
