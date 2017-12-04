@@ -6,6 +6,11 @@
 
 In this milestone we added normal map to snow material to add some bumpness over the snow surface. We added perlin noise to slope of snow material to add randomness to snow coverage. We also added screen space snow falling using post processing.
 
+Normal Map + PerlinNoise on Slope      |  Normal Map + PerlinNoise on Slop with Threshold
+:-------------------------------------:|:---------------------------------------------------:
+![](/image/NormalWithPerlinNoise.PNG)  |  ![](/image/Canyon2DPerlinNoiseNormalMapWithThreshold.PNG)
+
+
 ### Features Implemented
 **Perlin Noise On Snow Slope**
 
