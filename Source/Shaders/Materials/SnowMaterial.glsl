@@ -27,10 +27,13 @@ const  float SCALE = 100000.;
 const float ImageSize = 256.;
 // Fraction Noise is the fraction of the noise to use to modify the
 // blend coefficient.
-const float FractionNoise = 0.4;
-const float persistance =  0.5;
+const float FractionNoise = 0.3;
+const float persistance =  0.6;
 // orders are the number of orders to sum
-const float  orders = 5.;
+const float  orders = 6.;
+// add snow only when the level is above this value
+const float threshold = 0.1;
+const float highthreshold = 0.9;
 /*
  * 2D classic Perlin noise. Fast, but less useful than 3D noise.
  */
@@ -159,6 +162,12 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	      noiseval += noise(posScaled);
 	}
         material.alpha += FractionNoise * noiseval;
+	if ( material.alpha < threshold) {
+	      material.alpha = 0.;
+	}
+	else if ( material.alpha > highthreshold) {
+	         material.alpha = 1.;
+        }
         return material;
 }
 
