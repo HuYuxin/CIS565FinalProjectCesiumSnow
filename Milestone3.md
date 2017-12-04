@@ -60,6 +60,10 @@ This image shows the scale od the repeat pattern.
 
 **color.rgb * diffuseIntensity * 0.8  + specular * specularIntensity * 0.2**
 
+We used the available uv coordinates in MaterialInput, which are repeatative patches across the entire terrain.
+
+![](/image/uvcoordinates.PNG)
+
 Here are some results of applying normal maps to snow material.
 
 ![](/image/snowNormalMap.jpg)
@@ -81,7 +85,7 @@ Among the three results, we think the second normal map works the best. Therefor
 
 **Feature 3. Screenspace Snow Falling As Post Processing**
 
-* We added a post processing layer to add snow falling particles. For each fragment we will calculate its' alpha value to indicate the probability of snow by reading values from a gray noise texture. We pass a time uniform variable into the shader to make the snow particle moving.
+* We added a post processing layer to add snow falling particles. For each fragment we will calculate its' alpha value by reading values from a gray noise texture. The alpha value will be used to linear blend the snow flake and the rest of the scene. We pass a time uniform variable into the shader to make the snow particle moving.
 
 ![](/image/SnowFallingParticles.gif)
 
@@ -91,10 +95,17 @@ We also added tunable parameters to change how fast and how heavy the snow is.
 
 ![](/image/SnowChangeThickness.gif)
 
+We changed the skybox color to gray color and added folly effect when snow post processing is turned on
+
+![](/image/GraySky.jpg)
+
+![](/image/FoggyLense.jpg)
+
+
 
 ### Plans for final milestone
 
-* Milestone 4: Fix the square shape snow particles. Add the option to toggle noise in normal and slope to show the difference. Add wind forces to snow. Change the skybox color to darker when it is snow. Stretch goal: identify the ocean area and do not apply snow material over ocean.
+* Milestone 4: Fix the square shape snow particles. Fixed snow falling direction. Add wind forces to snow. Improve the efficiency by optimizing the post processing snow shader. Add the option to toggle noise in normal and slope to show the difference. Stretch goal: identify the ocean area and do not apply snow material over ocean.
 
 ### References
 
