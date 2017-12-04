@@ -1,11 +1,15 @@
-//uniform sampler2D u_colorTexture;
+uniform sampler2D u_colorTexture;
 uniform sampler2D u_texture;
 uniform sampler2D u_depthTexture;
+
+uniform float u_fallSpeed;
+uniform float u_snowThick;
+uniform float u_windDirection;
 
 varying vec2 v_textureCoordinates;
 
 float inteRatio = 0.8;
-float fallSpeed = 0.5;
+float fallSpeed = u_fallSpeed;
 float pi = 3.14159265359;
 float gTime;
 float depth;
@@ -44,7 +48,7 @@ float flakeVolume()
 {
     float sum = 0.0;
 
-    float snowThicknessThreshold = 0.65;
+    float snowThicknessThreshold = 1.0 - u_snowThick;
     vec3 snowDirection = normalize(czm_viewerPositionWC);
     vec3 snowDirectionEC = (czm_view * vec4(snowDirection,0.0)).xyz;
     //vec3 windForce = normalize(vec3(0.6,0.5,0.1));
@@ -80,21 +84,21 @@ float flakeVolume()
                 fall = (0.5 + 0.5 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
                 float s = 6.0;
 
-                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.4 * teta * r, 0.1 * p1.y + fall)).r);
-                s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(0.11 * p1.y + fall, -0.4 * teta * r)).r);
-                s *= smoothstep(snowThicknessThreshold - 0.05, 1.0, texture2D(u_texture, vec2(-(0.11 * p1.y + fall), 0.4 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.45 * teta * r, 0.3 * p1.y + fall)).r);
+                s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(0.41 * p1.y + fall, -0.45 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold - 0.05, 1.0, texture2D(u_texture, vec2(-(0.41 * p1.y + fall), 0.45 * teta * r)).r);
 
                 sum += s;
             }
             if (t2 < depth && t2 > 0.0)
             {
                 teta = atan(p2.z, p2.x) / (2.0 * pi);
-                fall = (0.5 + 0.5 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
+                fall = (0.235 + 0.35 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
                 float s = 6.0;
 
-                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.4 * teta * r, 0.1 * p2.y + fall)).r);
-                s *= smoothstep(snowThicknessThreshold - 0.05, 1.0, texture2D(u_texture, vec2(-(0.11 * p2.y + fall), 0.4 * teta * r)).r);
-                s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(0.11 * p2.y + fall, -0.4 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.35 * teta * r, 0.6 * p2.y + fall)).r);
+                s *= smoothstep(snowThicknessThreshold - 0.05, 1.0, texture2D(u_texture, vec2(-(0.31 * p2.y + fall), 0.45 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(0.31 * p2.y + fall, -0.45 * teta * r)).r);
 
                 sum += s;
             }
@@ -157,6 +161,7 @@ vec3 renderEverything(vec2 offset)
     	//col = sky();
     }
 
+    col = texture2D(u_colorTexture, v_textureCoordinates).rgb;
     //float cameraAboveHorizen = czm_viewerPositionWC.z;
     //if(cameraAboveHorizen <= (10000.0 + earthEllipsoid.radii.x))
     //{

@@ -33,11 +33,10 @@
         <td>
             <input type="range" min="1.0" max="500.0" step="1.0" data-bind="value: spacing, valueUpdate: 'input'">
         </td>
-        <td><button onclick=
-            "getPerlinNoiseTexture();">Show Texture
-            </button>
+        <td>Snow Falling</td>
+        <td>
+            <input type="checkbox" data-bind="checked: snowFallingShow">
         </td>
-
     </tr>
 </tbody>
 </table>
@@ -47,6 +46,8 @@ function startup(Cesium) {
     'use strict';
 //Sandcastle_Begin
 var viewer = new Cesium.Viewer('cesiumContainer');
+var scene = viewer.scene;
+var postProcess = scene.postProcess;
 var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
     url : 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles',
     requestWaterMask : true,
@@ -61,12 +62,9 @@ viewer.clockViewModel.currentTime = Cesium.JulianDate.fromDate(new Date(2017, 8,
 
 // The viewModel tracks the state of our mini application.
 var viewModel = {
-    spacing: 100.0
+    spacing: 100.0,
+	snowFallingShow : false
 };
-
-//var perlinNoiseImage = new Image();
-//var perlinNoiseImageLoaded = false;
-//preloadImage('../images/normalmap.png', function(){perlinNoiseImageLoaded = true; console.log("perlinNoiseImageLoaded is set to true");});
 
 function getColorRamp() {
     var ramp = document.createElement('canvas');
@@ -86,48 +84,23 @@ function getColorRamp() {
     return ramp;
 }
 
-
-/*function preloadImage(url, callback)
-{
-    console.log("preloadImage called" + url);
-    perlinNoiseImage.src=url;
-    perlinNoiseImage.onload = function(){
-        console.log("image loaded");
-        callback();
-    }
-}
-
-//Added by Yuxin
-function getPerlinNoiseTexture() {
-    var perlinNoise = document.createElement('canvas');
-    var context = perlinNoise.getContext('2d');
-    //context.beginPath();
-    //context.rect(0, 0, 512, 512);
-    //context.fillStyle = "red";
-    //context.fill();
-
-    /*var perlinNoiseImage = new Image();
-    perlinNoiseImage.src = '../images/perlin_colors.png';
-    perlinNoiseImage.onload = function(){
-        //context.drawImage(perlinNoiseImage, 0, 0, 512,512);
-        console.log("perlinNoise Image drawn");
-        callback(perlinNoiseImage);
-    }*/
-    //return perlinNoiseImage;
-    /*if(perlinNoiseImageLoaded){
-        context.drawImage(perlinNoiseImage, 0, 0, 512,512);
-        return perlinNoise;
-    }else{
-        alert("perlin noise texture not loaded!");
-    }
-}*/
-
 // Convert the viewModel members into knockout observables.
 Cesium.knockout.track(viewModel);
 
 // Bind the viewModel to the DOM elements of the UI that call for it.
 var toolbar = document.getElementById('toolbar');
 Cesium.knockout.applyBindings(viewModel, toolbar);
+
+for (var name in viewModel) {
+    if (viewModel.hasOwnProperty(name)) {
+        Cesium.knockout.getObservable(viewModel, name).subscribe(updatePostProcess);
+    }
+}
+
+
+function updatePostProcess() {
+    postProcess.snowFalling.show = Boolean(viewModel.snowFallingShow);
+}
 
 // setup alternative terrain providers
 var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider();
