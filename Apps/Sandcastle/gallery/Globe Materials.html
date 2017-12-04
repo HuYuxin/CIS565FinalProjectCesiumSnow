@@ -33,6 +33,11 @@
         <td>
             <input type="range" min="1.0" max="500.0" step="1.0" data-bind="value: spacing, valueUpdate: 'input'">
         </td>
+        <td><button onclick=
+            "getPerlinNoiseTexture();">Show Texture
+            </button>
+        </td>
+
     </tr>
 </tbody>
 </table>
@@ -62,7 +67,7 @@ var viewModel = {
 var perlinNoiseImage = new Image();
 var perlinNoiseImageLoaded = false;
 preloadImage('../images/RandomColor.png', function(){perlinNoiseImageLoaded = true;
-                                         console.log("perlinNoiseImageLoaded is set to true");});
+                                         console.log("perlinSlopeImageLoaded is set to true");});
 function getColorRamp() {
     var ramp = document.createElement('canvas');
     ramp.width = 100;
@@ -168,9 +173,12 @@ Sandcastle.addToolbarMenu([{
 }], 'terrainMenu');
 
 Sandcastle.addDefaultToolbarMenu([{
-    text : 'Mount Everest',
+    text : 'Grand Canyon',
     onselect : function() {
-        lookAtMtEverest();
+        var target = new Cesium.Cartesian3.fromDegrees(-112.1130, 36.1070, 2500);
+        var offset = new Cesium.Cartesian3(6344.974098678562, -793.3419798081741, 2499.950886076316);
+        viewer.camera.lookAt(target, offset);
+        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     }
 }, {
     text : 'Half Dome',
@@ -188,15 +196,13 @@ Sandcastle.addDefaultToolbarMenu([{
         viewer.camera.lookAt(target, offset);
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     }
-}, {
-    text : 'Grand Canyon',
+},{
+    text : 'Mount Everest',
     onselect : function() {
-        var target = new Cesium.Cartesian3.fromDegrees(-112.1130, 36.1070, 2500);
-        var offset = new Cesium.Cartesian3(6344.974098678562, -793.3419798081741, 2499.950886076316);
-        viewer.camera.lookAt(target, offset);
-        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+        lookAtMtEverest();
     }
-}], 'zoomButtons');
+}
+], 'zoomButtons');
 
 function lookAtMtEverest() {
     var target = new Cesium.Cartesian3(300770.50872389384, 5634912.131394585, 2978152.2865545116);
@@ -233,6 +239,8 @@ Sandcastle.addToolbarMenu([{
     onselect : function() {
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
         viewer.scene.globe.material.uniforms.image = getPerlinNoiseTexture();
+        viewer.scene.globe.material.uniforms.normalMap = '../images/snowNormalMap2.jpg';
+        viewer.scene.globe.material.uniforms.whiteNoise = '../images/coloredWhiteNoise.jpg';
     }
 }], 'materialMenu');
 

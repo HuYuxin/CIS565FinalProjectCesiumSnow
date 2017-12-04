@@ -1549,7 +1549,7 @@ define([
         },
         translucent : false
     });
-	
+
 	/**
      * Gets the name of the snow terrain material.
      * @type {String}
@@ -1560,7 +1560,8 @@ define([
         fabric : {
             type : Material.SnowMaterialMaterialType,
             uniforms : {
-                image: Material.DefaultImageId
+                normalMap: Material.DefaultImageId,
+                whiteNoise: Material.DefaultImageId
             },
             source : SnowMaterial
         },

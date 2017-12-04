@@ -1,4 +1,5 @@
-uniform sampler2D image;
+uniform sampler2D normalMap;
+uniform sampler2D whiteNoise;
 
 
  /* Author: Stefan Gustavson ITN-LiTH (stegu@itn.liu.se) 2004-12-05
@@ -39,19 +40,19 @@ float noise(vec2 P)
   vec2 Pf = fract(P);             // Fractional part for interpolation
 
   // Noise contribution from lower left corner
-  vec2 grad00 = texture2D(image, Pi).rg * 4.0 - 1.0;
+  vec2 grad00 = texture2D(whiteNoise, Pi).rg * 4.0 - 1.0;
   float n00 = dot(grad00, Pf);
 
   // Noise contribution from lower right corner
-  vec2 grad10 = texture2D(image, Pi + vec2(ONE, 0.0)).rg * 4.0 - 1.0;
+  vec2 grad10 = texture2D(whiteNoise, Pi + vec2(ONE, 0.0)).rg * 4.0 - 1.0;
   float n10 = dot(grad10, Pf - vec2(1.0, 0.0));
 
   // Noise contribution from upper left corner
-  vec2 grad01 = texture2D(image, Pi + vec2(0.0, ONE)).rg * 4.0 - 1.0;
+  vec2 grad01 = texture2D(whiteNoise, Pi + vec2(0.0, ONE)).rg * 4.0 - 1.0;
   float n01 = dot(grad01, Pf - vec2(0.0, 1.0));
 
   // Noise contribution from upper right corner
-  vec2 grad11 = texture2D(image, Pi + vec2(ONE, ONE)).rg * 4.0 - 1.0;
+  vec2 grad11 = texture2D(whiteNoise, Pi + vec2(ONE, ONE)).rg * 4.0 - 1.0;
   float n11 = dot(grad11, Pf - vec2(1.0, 1.0));
 
   // Blend contributions along x
@@ -73,31 +74,31 @@ float noise(vec3 P)
   vec3 Pf = fract(P);     // Fractional part for interpolation
 
   // Noise contributions from (x=0, y=0), z=0 and z=1
-  float perm00 = texture2D(image, Pi.xy).a ;
-  vec3  grad000 = texture2D(image, vec2(perm00, Pi.z)).rgb * 4.0 - 1.0;
+  float perm00 = texture2D(whiteNoise, Pi.xy).a ;
+  vec3  grad000 = texture2D(whiteNoise, vec2(perm00, Pi.z)).rgb * 4.0 - 1.0;
   float n000 = dot(grad000, Pf);
-  vec3  grad001 = texture2D(image, vec2(perm00, Pi.z + ONE)).rgb * 4.0 - 1.0;
+  vec3  grad001 = texture2D(whiteNoise, vec2(perm00, Pi.z + ONE)).rgb * 4.0 - 1.0;
   float n001 = dot(grad001, Pf - vec3(0.0, 0.0, 1.0));
 
   // Noise contributions from (x=0, y=1), z=0 and z=1
-  float perm01 = texture2D(image, Pi.xy + vec2(0.0, ONE)).a ;
-  vec3  grad010 = texture2D(image, vec2(perm01, Pi.z)).rgb * 4.0 - 1.0;
+  float perm01 = texture2D(whiteNoise, Pi.xy + vec2(0.0, ONE)).a ;
+  vec3  grad010 = texture2D(whiteNoise, vec2(perm01, Pi.z)).rgb * 4.0 - 1.0;
   float n010 = dot(grad010, Pf - vec3(0.0, 1.0, 0.0));
-  vec3  grad011 = texture2D(image, vec2(perm01, Pi.z + ONE)).rgb * 4.0 - 1.0;
+  vec3  grad011 = texture2D(whiteNoise, vec2(perm01, Pi.z + ONE)).rgb * 4.0 - 1.0;
   float n011 = dot(grad011, Pf - vec3(0.0, 1.0, 1.0));
 
   // Noise contributions from (x=1, y=0), z=0 and z=1
-  float perm10 = texture2D(image, Pi.xy + vec2(ONE, 0.0)).a ;
-  vec3  grad100 = texture2D(image, vec2(perm10, Pi.z)).rgb * 4.0 - 1.0;
+  float perm10 = texture2D(whiteNoise, Pi.xy + vec2(ONE, 0.0)).a ;
+  vec3  grad100 = texture2D(whiteNoise, vec2(perm10, Pi.z)).rgb * 4.0 - 1.0;
   float n100 = dot(grad100, Pf - vec3(1.0, 0.0, 0.0));
-  vec3  grad101 = texture2D(image, vec2(perm10, Pi.z + ONE)).rgb * 4.0 - 1.0;
+  vec3  grad101 = texture2D(whiteNoise, vec2(perm10, Pi.z + ONE)).rgb * 4.0 - 1.0;
   float n101 = dot(grad101, Pf - vec3(1.0, 0.0, 1.0));
 
   // Noise contributions from (x=1, y=1), z=0 and z=1
-  float perm11 = texture2D(image, Pi.xy + vec2(ONE, ONE)).a ;
-  vec3  grad110 = texture2D(image, vec2(perm11, Pi.z)).rgb * 4.0 - 1.0;
+  float perm11 = texture2D(whiteNoise, Pi.xy + vec2(ONE, ONE)).a ;
+  vec3  grad110 = texture2D(whiteNoise, vec2(perm11, Pi.z)).rgb * 4.0 - 1.0;
   float n110 = dot(grad110, Pf - vec3(1.0, 1.0, 0.0));
-  vec3  grad111 = texture2D(image, vec2(perm11, Pi.z + ONE)).rgb * 4.0 - 1.0;
+  vec3  grad111 = texture2D(whiteNoise, vec2(perm11, Pi.z + ONE)).rgb * 4.0 - 1.0;
   float n111 = dot(grad111, Pf - vec3(1.0, 1.0, 1.0));
 
   // Blend contributions along x
@@ -132,12 +133,18 @@ vec3  ScaleCoordinate(vec3 pos, float scale)
 czm_material czm_getMaterial(czm_materialInput materialInput)
 {
     czm_material material = czm_getDefaultMaterial(materialInput);
-	
+
 	//Added by Yuxin For Test
-	//vec3 normal = normalize(materialInput.normalEC);
 	float snowSlope = materialInput.slope;
 	material.alpha = snowSlope;
-	// eye coordinate
+        material.diffuse = vec3(0.8, 0.8, 0.9);
+        vec3 normalEC = materialInput.normalEC;
+        material.shininess = 200.0;
+        vec3 normalMapNormal = texture2D(normalMap, materialInput.st).rgb;
+        mat3 tangentToEye = materialInput.tangentToEyeMatrix;
+        material.normal  = tangentToEye * normalMapNormal;
+        material.specular = 0.9;
+	// now this is really the model coordinate position
 	//vec2  posCoord = materialInput.positionToEyeEC.xz;
 	vec3 posCoord = materialInput.positionToEyeEC.xzy;
 	posCoord /= SCALE;
@@ -152,10 +159,10 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	      noiseval += noise(posScaled);
 	}
         material.alpha += FractionNoise * noiseval;
-//	vec3 color =texture2D(image,  materialInput.str.xy).rgb;
-	material.diffuse = vec3(0.8, 0.8, 0.9);
-	//material.diffuse = materialInput.normalEC;
-    //material.alpha = 1.0;
-	
-    return material;
+        return material;
 }
+
+
+
+
+
