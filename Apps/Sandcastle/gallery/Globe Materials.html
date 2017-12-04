@@ -66,6 +66,10 @@ var viewModel = {
 	snowFallingShow : false
 };
 
+//var perlinNoiseImage = new Image();
+//var perlinNoiseImageLoaded = false;
+//preloadImage('../images/RandomColor.png', function(){perlinNoiseImageLoaded = true;
+                                         //console.log("perlinSlopeImageLoaded is set to true");});
 function getColorRamp() {
     var ramp = document.createElement('canvas');
     ramp.width = 100;
@@ -83,6 +87,27 @@ function getColorRamp() {
     ctx.fillRect(0, 0, 100, 1);
     return ramp;
 }
+
+/*function preloadImage(url, callback)
+{
+    console.log("preloadImage called" + url);
+    perlinNoiseImage.src=url;
+    perlinNoiseImage.onload = function(){
+        console.log("image loaded");
+        callback();
+    }
+}
+//Added by Yuxin
+function getPerlinNoiseTexture() {
+    var perlinNoise = document.createElement('canvas');
+    var context = perlinNoise.getContext('2d');
+    if(perlinNoiseImageLoaded){
+        context.drawImage(perlinNoiseImage, 0, 0, 512,512);
+        return perlinNoise;
+    }else{
+        alert("perlin noise texture not loaded!");
+    }
+}*/
 
 // Convert the viewModel members into knockout observables.
 Cesium.knockout.track(viewModel);
@@ -216,8 +241,9 @@ Sandcastle.addToolbarMenu([{
     text : 'Snow Material',
     onselect : function() {
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
+        //viewer.scene.globe.material.uniforms.image = getPerlinNoiseTexture();
         viewer.scene.globe.material.uniforms.normalMap = '../images/snowNormalMap2.jpg';
-        viewer.scene.globe.material.uniforms.whiteNoise = '../images/coloredWhiteNoise.jpg';
+        viewer.scene.globe.material.uniforms.whiteNoise = '../images/RandomNoise256.png';
     }
 }], 'materialMenu');
 
