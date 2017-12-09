@@ -148,6 +148,7 @@ vec3 renderEverything(vec2 offset)
     }
     vec4 flake = screenSpaceBlizzard();
     col = flake.a * flake.rgb + (1.0 - flake.a) * col.rgb;
+
     vec4 fog = screenSpaceFog(pos);
     col = (fog.a * 0.2) * fog.rgb + (1.0 - fog.a * 0.2) * col.rgb;
     vec4 ice = screenSpaceIce();

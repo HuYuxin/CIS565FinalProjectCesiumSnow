@@ -247,6 +247,7 @@ define([
             fragmentShader : SnowFalling,
             uniformValues : {
                 texture : buildModuleUrl('Assets/Textures/grayNoiseM2.png'),
+
                 fallSpeed : 0.3,
                 snowThick : 0.5,
                 windDirection : 3.0

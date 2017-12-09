@@ -41,15 +41,9 @@
         </td>
     </tr>
     <tr>
-		<td>Wind Direction</td>
+		<td>Wind Force</td>
         <td>
             <input type="range" min="0.0" max="6.28" step="0.1" data-bind="value: windDirectionData, valueUpdate: 'input'">
-        </td>
-    </tr>
-    <tr>
-        <td>Snow Falling</td>
-        <td>
-            <input type="checkbox" data-bind="checked: snowFallingShow">
         </td>
     </tr>
 </tbody>
@@ -82,9 +76,7 @@ viewer.clockViewModel.currentTime = Cesium.JulianDate.fromDate(new Date(2017, 8,
 var viewModel = {
 	fallingSpeedData : 0.3,
 	thickThresholdData: 0.5,
-	windDirectionData : 3.0,
-    snowFallingShow : false,
-    snowFallingDebug: false
+	windDirectionData : 3.0
 };
 
 
@@ -114,32 +106,31 @@ Cesium.knockout.track(viewModel);
 var toolbar = document.getElementById('toolbar');
 Cesium.knockout.applyBindings(viewModel, toolbar);
 
-for (var name in viewModel) {
-    if (viewModel.hasOwnProperty(name)) {
-        Cesium.knockout.getObservable(viewModel, name).subscribe(updatePostProcess);
+
+Cesium.knockout.getObservable(viewModel, 'fallingSpeedData').subscribe(
+    function(newValue) {
+		if(postProcess.snowFalling.show){
+			postProcess.snowFalling.uniformValues.fallSpeed = parseFloat(newValue);
+		}
     }
-}
+);
 
-
-function updatePostProcess() {
-    postProcess.snowFalling.show = Boolean(viewModel.snowFallingShow);
-
-    if( Boolean(viewModel.snowFallingShow) ){
-        viewer.scene.globe.material = Cesium.Material.fromType('Snow');
-        currentFrameNum = viewer.scene.frameState.frameNumber;
-        viewer.scene.globe.material.uniforms.accumulationStartTime = currentFrameNum;
-        currentFrameNum += 100.0;
-        viewer.scene.globe.material.uniforms.accumulationEndTime = currentFrameNum;
-        viewer.scene.globe.material.uniforms.whiteNoise = '../images/coloredWhiteNoise.jpg';
-        viewer.scene.globe.material.uniforms.level1normalMap = '../images/snowNormalMapLevel1.jpg';
-        viewer.scene.globe.material.uniforms.level2normalMap = '../images/snowNormalMapLevel2.jpg';
-        viewer.scene.globe.material.uniforms.level3normalMap = '../images/snowNormalMapLevel3.jpg';
-        viewer.scene.globe.material.uniforms.level4normalMap = '../images/snowNormalMapLevel4.jpg';
-        viewer.scene.globe.material.uniforms.level5normalMap = '../images/snowNormalMapLevel5.jpg';
-    }else{
-        viewer.scene.globe.material = undefined;
+Cesium.knockout.getObservable(viewModel, 'thickThresholdData').subscribe(
+    function(newValue) {
+		if(postProcess.snowFalling.show){
+			postProcess.snowFalling.uniformValues.snowThick = parseFloat(newValue);
+		}
     }
-}
+);
+
+Cesium.knockout.getObservable(viewModel, 'windDirectionData').subscribe(
+    function(newValue) {
+		if(postProcess.snowFalling.show){
+			postProcess.snowFalling.uniformValues.windDirection = parseFloat(newValue);
+		}
+    }
+);
+
 
 // setup alternative terrain providers
 var ellipsoidProvider = new Cesium.EllipsoidTerrainProvider();
@@ -234,19 +225,16 @@ Sandcastle.addDefaultToolbarMenu([{
 
 
 Sandcastle.addToolbarMenu([{
-    text : 'No Material',
+    text : 'No Snow',
     onselect : function() {
+        postProcess.snowFalling.show = false;
         viewer.scene.globe.material = undefined;
     }
 },  {
-    text : 'Slope Color Ramp Material',
+    text : 'Snow',
     onselect : function() {
-        viewer.scene.globe.material = Cesium.Material.fromType('SlopeRamp');
-        viewer.scene.globe.material.uniforms.image = getColorRamp();
-    }
-}, {
-    text : 'Snow Material',
-    onselect : function() {
+        postProcess.snowFalling.show = true;
+
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
         currentFrameNum = viewer.scene.frameState.frameNumber;
         viewer.scene.globe.material.uniforms.accumulationStartTime = currentFrameNum;
@@ -260,31 +248,6 @@ Sandcastle.addToolbarMenu([{
         viewer.scene.globe.material.uniforms.level5normalMap = '../images/snowNormalMapLevel5.jpg';
     }
 }], 'materialMenu');
-
-
-Cesium.knockout.getObservable(viewModel, 'fallingSpeedData').subscribe(
-    function(newValue) {
-		if(postProcess.snowFalling.show){
-			postProcess.snowFalling.uniformValues.fallSpeed = parseFloat(newValue);
-		}
-    }
-);
-
-Cesium.knockout.getObservable(viewModel, 'thickThresholdData').subscribe(
-    function(newValue) {
-		if(postProcess.snowFalling.show){
-			postProcess.snowFalling.uniformValues.snowThick = parseFloat(newValue);
-		}
-    }
-);
-
-Cesium.knockout.getObservable(viewModel, 'windDirectionData').subscribe(
-    function(newValue) {
-		if(postProcess.snowFalling.show){
-			postProcess.snowFalling.uniformValues.windDirection = parseFloat(newValue);
-		}
-    }
-);
 
 //Sandcastle_End
     Sandcastle.finishedLoading();
