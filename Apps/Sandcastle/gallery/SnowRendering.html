@@ -52,12 +52,6 @@
             <input type="checkbox" data-bind="checked: snowFallingShow">
         </td>
     </tr>
-    <tr>
-        <td>Snow Falling Debug</td>
-        <td>
-            <input type="checkbox" data-bind="checked: snowFallingDebug">
-        </td>
-    </tr>
 </tbody>
 </table>
 </div>
@@ -129,7 +123,6 @@ for (var name in viewModel) {
 
 function updatePostProcess() {
     postProcess.snowFalling.show = Boolean(viewModel.snowFallingShow);
-    postProcess.snowFalling.uniformValues.debugMode = Boolean(viewModel.snowFallingDebug);
 
     if( Boolean(viewModel.snowFallingShow) ){
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');

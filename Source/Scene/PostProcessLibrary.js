@@ -249,8 +249,7 @@ define([
                 texture : buildModuleUrl('Assets/Textures/grayNoiseM1.png'),
                 fallSpeed: 0.2,
                 snowThick: 0.3,
-                windDirection: 0.5,
-                debugMode: false
+                windDirection: 0.5
             }
         });
     }

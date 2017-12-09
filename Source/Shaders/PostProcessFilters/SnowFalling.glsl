@@ -5,7 +5,6 @@ uniform sampler2D u_depthTexture;
 uniform float u_fallSpeed;
 uniform float u_snowThick;
 uniform float u_windDirection;
-uniform bool u_debugMode;
 
 varying vec2 v_textureCoordinates;
 
@@ -218,13 +217,8 @@ vec3 flakeVolumeDebug()
 
 vec4 screenSpaceBlizzard()
 {
-    if(!u_debugMode){
-        float flake = flakeVolume();
-        return vec4(1.0, 1.0, 1.0, clamp(flake, 0.0, 1.0));
-    }else{
-        vec3 flakeDebug = flakeVolumeDebug();
-        return vec4(flakeDebug, 0.5);
-    }
+    float flake = flakeVolume();
+    return vec4(1.0, 1.0, 1.0, clamp(flake, 0.0, 1.0));
 
 }
 //returns the distance between the position input and the earth surface
