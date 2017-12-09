@@ -64,10 +64,10 @@ var viewModel = {
     spacing: 100.0
 };
 
-//var perlinNoiseImage = new Image();
-//var perlinNoiseImageLoaded = false;
-//preloadImage('../images/normalmap.png', function(){perlinNoiseImageLoaded = true; console.log("perlinNoiseImageLoaded is set to true");});
-
+var perlinNoiseImage = new Image();
+var perlinNoiseImageLoaded = false;
+preloadImage('../images/RandomColor.png', function(){perlinNoiseImageLoaded = true;
+                                         console.log("perlinSlopeImageLoaded is set to true");});
 function getColorRamp() {
     var ramp = document.createElement('canvas');
     ramp.width = 100;
@@ -85,9 +85,7 @@ function getColorRamp() {
     ctx.fillRect(0, 0, 100, 1);
     return ramp;
 }
-
-
-/*function preloadImage(url, callback)
+function preloadImage(url, callback)
 {
     console.log("preloadImage called" + url);
     perlinNoiseImage.src=url;
@@ -96,7 +94,6 @@ function getColorRamp() {
         callback();
     }
 }
-
 //Added by Yuxin
 function getPerlinNoiseTexture() {
     var perlinNoise = document.createElement('canvas');
@@ -105,7 +102,6 @@ function getPerlinNoiseTexture() {
     //context.rect(0, 0, 512, 512);
     //context.fillStyle = "red";
     //context.fill();
-
     /*var perlinNoiseImage = new Image();
     perlinNoiseImage.src = '../images/perlin_colors.png';
     perlinNoiseImage.onload = function(){
@@ -114,14 +110,13 @@ function getPerlinNoiseTexture() {
         callback(perlinNoiseImage);
     }*/
     //return perlinNoiseImage;
-    /*if(perlinNoiseImageLoaded){
+    if(perlinNoiseImageLoaded){
         context.drawImage(perlinNoiseImage, 0, 0, 512,512);
         return perlinNoise;
     }else{
         alert("perlin noise texture not loaded!");
     }
-}*/
-
+}
 // Convert the viewModel members into knockout observables.
 Cesium.knockout.track(viewModel);
 
@@ -243,8 +238,9 @@ Sandcastle.addToolbarMenu([{
     text : 'Snow Material',
     onselect : function() {
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
+        viewer.scene.globe.material.uniforms.image = getPerlinNoiseTexture();
         viewer.scene.globe.material.uniforms.normalMap = '../images/snowNormalMap2.jpg';
-        viewer.scene.globe.material.uniforms.whiteNoise = '../images/coloredWhiteNoise.jpg';
+        viewer.scene.globe.material.uniforms.whiteNoise = '../images/RandomNoise256.png';
     }
 }], 'materialMenu');
 

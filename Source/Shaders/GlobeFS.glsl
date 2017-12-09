@@ -199,11 +199,10 @@ void main()
     materialInput.normalEC = v_normalEC;
     materialInput.slope = v_slope;
     materialInput.height = v_height;
-    materialInput.positionToEyeEC = v_positionEC;
-
+    // Here we pass the Model coordinate position in to see how that works
+    materialInput.positionToEyeEC = v_positionMC;
     mat3 enuToEye = czm_eastNorthUpToEyeCoordinates(v_positionMC, v_normalEC);
     materialInput.tangentToEyeMatrix = enuToEye;
-
     czm_material material = czm_getMaterial(materialInput);
     color.xyz = mix(color.xyz, material.diffuse, material.alpha);
     shiness = material.shininess;
