@@ -29,29 +29,33 @@
 <div id="sampleButtons"></div>
 <table><tbody>
     <tr>
-        <td>Contour Spacing</td>
-        <td>
-            <input type="range" min="1.0" max="500.0" step="1.0" data-bind="value: spacing, valueUpdate: 'input'">
-        </td>
-
 		<td>Snow Falling Speed</td>
         <td>
-            <input type="range" min="0.2" max="1.0" step="0.1" data-bind="value: fallingSpeedData, valueUpdate: 'input'">
+            <input type="range" min="0.1" max="1.0" step="0.1" data-bind="value: fallingSpeedData, valueUpdate: 'input'">
         </td>
-
+    </tr>
+    <tr>
 		<td>Snow Thickness</td>
         <td>
             <input type="range" min="0.3" max="0.5" step="0.01" data-bind="value: thickThresholdData, valueUpdate: 'input'">
         </td>
-
+    </tr>
+    <tr>
 		<td>Wind Direction</td>
         <td>
             <input type="range" min="0.2" max="1.0" step="0.1" data-bind="value: windDirectionData, valueUpdate: 'input'">
         </td>
-
+    </tr>
+    <tr>
         <td>Snow Falling</td>
         <td>
             <input type="checkbox" data-bind="checked: snowFallingShow">
+        </td>
+    </tr>
+    <tr>
+        <td>Snow Falling Debug</td>
+        <td>
+            <input type="checkbox" data-bind="checked: snowFallingDebug">
         </td>
     </tr>
 </tbody>
@@ -62,8 +66,6 @@
 
 <script id="cesium_sandcastle_script">
 function startup(Cesium) {
-
-
     'use strict';
 //Sandcastle_Begin
 var viewer = new Cesium.Viewer('cesiumContainer');
@@ -84,11 +86,11 @@ viewer.clockViewModel.currentTime = Cesium.JulianDate.fromDate(new Date(2017, 8,
 
 // The viewModel tracks the state of our mini application.
 var viewModel = {
-    spacing : 100.0,
-	fallingSpeedData : 0.2,
+	fallingSpeedData : 0.1,
 	thickThresholdData: 0.3,
 	windDirectionData : 0.5,
-	snowFallingShow : false
+    snowFallingShow : false,
+    snowFallingDebug: false
 };
 
 
@@ -127,6 +129,23 @@ for (var name in viewModel) {
 
 function updatePostProcess() {
     postProcess.snowFalling.show = Boolean(viewModel.snowFallingShow);
+    postProcess.snowFalling.uniformValues.debugMode = Boolean(viewModel.snowFallingDebug);
+
+    if( Boolean(viewModel.snowFallingShow) ){
+        viewer.scene.globe.material = Cesium.Material.fromType('Snow');
+        currentFrameNum = viewer.scene.frameState.frameNumber;
+        viewer.scene.globe.material.uniforms.accumulationStartTime = currentFrameNum;
+        currentFrameNum += 100.0;
+        viewer.scene.globe.material.uniforms.accumulationEndTime = currentFrameNum;
+        viewer.scene.globe.material.uniforms.whiteNoise = '../images/coloredWhiteNoise.jpg';
+        viewer.scene.globe.material.uniforms.level1normalMap = '../images/snowNormalMapLevel1.jpg';
+        viewer.scene.globe.material.uniforms.level2normalMap = '../images/snowNormalMapLevel2.jpg';
+        viewer.scene.globe.material.uniforms.level3normalMap = '../images/snowNormalMapLevel3.jpg';
+        viewer.scene.globe.material.uniforms.level4normalMap = '../images/snowNormalMapLevel4.jpg';
+        viewer.scene.globe.material.uniforms.level5normalMap = '../images/snowNormalMapLevel5.jpg';
+    }else{
+        viewer.scene.globe.material = undefined;
+    }
 }
 
 // setup alternative terrain providers
@@ -186,9 +205,9 @@ Sandcastle.addDefaultToolbarMenu([{
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     }
 }, {
-    text : 'Half Dome',
+    text : 'Great Wall',
     onselect : function() {
-        var target = new Cesium.Cartesian3(-2489625.0836225147, -4393941.44443024, 3882535.9454173897);
+        var target = new Cesium.Cartesian3.fromDegrees(116.5704, 40.4319, 2500);
         var offset = new Cesium.Cartesian3(-6857.40902037546, 412.3284835694358, 2147.5545426812023);
         viewer.camera.lookAt(target, offset);
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
@@ -201,39 +220,32 @@ Sandcastle.addDefaultToolbarMenu([{
         viewer.camera.lookAt(target, offset);
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     }
-},{
-    text : 'Mount Everest',
+}, {
+    text : 'Pyramid',
     onselect : function() {
-        lookAtMtEverest();
+        var target = new Cesium.Cartesian3.fromDegrees(31.1342, 29.9792, 2000);
+        var offset = new Cesium.Cartesian3(2500.0, 500.0, 2500.0);
+        viewer.camera.lookAt(target, offset);
+        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
+    }
+}, {
+    text : 'San Francisco Bay',
+    onselect : function() {
+        var target = new Cesium.Cartesian3.fromDegrees(-122.2913, 37.8272, 2000);
+        var offset = new Cesium.Cartesian3(2500.0, 500.0, 2500.0);
+        viewer.camera.lookAt(target, offset);
+        viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     }
 }
 ], 'zoomButtons');
 
-function lookAtMtEverest() {
-    var target = new Cesium.Cartesian3(300770.50872389384, 5634912.131394585, 2978152.2865545116);
-    var offset = new Cesium.Cartesian3(6344.974098678562, -793.3419798081741, 2499.9508860763162);
-    viewer.camera.lookAt(target, offset);
-    viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
-}
 
 Sandcastle.addToolbarMenu([{
     text : 'No Material',
     onselect : function() {
         viewer.scene.globe.material = undefined;
     }
-}, {
-    text : 'Elevation Color Ramp Material',
-    onselect : function() {
-        viewer.scene.globe.material = Cesium.Material.fromType('ElevationRamp');
-        viewer.scene.globe.material.uniforms.image = getColorRamp();
-    }
-}, {
-    text : 'Elevation Contour Material',
-    onselect : function() {
-        viewer.scene.globe.material = Cesium.Material.fromType('ElevationContour');
-        viewer.scene.globe.material.uniforms.color = Cesium.Color.RED;
-    }
-}, {
+},  {
     text : 'Slope Color Ramp Material',
     onselect : function() {
         viewer.scene.globe.material = Cesium.Material.fromType('SlopeRamp');
@@ -253,17 +265,9 @@ Sandcastle.addToolbarMenu([{
         viewer.scene.globe.material.uniforms.level3normalMap = '../images/snowNormalMapLevel3.jpg';
         viewer.scene.globe.material.uniforms.level4normalMap = '../images/snowNormalMapLevel4.jpg';
         viewer.scene.globe.material.uniforms.level5normalMap = '../images/snowNormalMapLevel5.jpg';
-        //console.log(currentFrameNum);
     }
 }], 'materialMenu');
 
-Cesium.knockout.getObservable(viewModel, 'spacing').subscribe(
-    function(newValue) {
-        if (viewer.scene.globe.material) {
-            viewer.scene.globe.material.uniforms.spacing = parseFloat(newValue);
-        }
-    }
-);
 
 Cesium.knockout.getObservable(viewModel, 'fallingSpeedData').subscribe(
     function(newValue) {
