@@ -54,13 +54,18 @@ float flakeVolume()
     //vec3 windForce = normalize(vec3(0.6,0.5,0.1));
     //snowDirectionWC += windForce;
 
+    vec4 rayOriginWorldHomo = (czm_inverseView * vec4(ray.origin, 1.0));
+    vec3 rayOriginWorld = rayOriginWorldHomo.xyz / rayOriginWorldHomo.w;
+    vec3 rayDirectionWorld = (czm_inverseView * vec4(ray.direction, 0.0)).xyz;
+    rayDirectionWorld = normalize(rayDirectionWorld);
+
     float fall;
     vec3 p1, p2;
     float teta;
     float t1, t2;
-    float a = pow(snowDirectionEC.x, 2.0) + pow(snowDirectionEC.y, 2.0);
-    float b = 2.0 * (snowDirectionEC.x * ray.origin.x + snowDirectionEC.y * ray.origin.y);
-    float c = pow(ray.origin.x, 2.0) + pow(ray.origin.y, 2.0);
+    float a = pow(rayDirectionWorld.x, 2.0) + pow(rayDirectionWorld.z, 2.0);
+    float b = 2.0 * (rayDirectionWorld.x * rayOriginWorld.x/600000.0 + rayDirectionWorld.z * rayOriginWorld.z/600000.0);
+    float c = pow(rayOriginWorld.x/600000.0, 2.0) + pow(rayOriginWorld.z/600000.0, 2.0);
     float ac4 = 4.0 * a*c;
     float a4 = 4.0 * a;
     float a2 = 2.0 * a;
@@ -76,17 +81,17 @@ float flakeVolume()
             t2 = (-b + sqrt(delta))/a2;
             p1 = ray.origin + t1 * ray.direction;
             p2 = ray.origin + t2 * ray.direction;
-            vec3 p1WC = (czm_view * vec4(p1,1.0)).xyz;
-            vec3 p2WC = (czm_view * vec4(p2,1.0)).xyz;
+            //vec3 p1WC = (czm_view * vec4(p1,1.0)).xyz;
+            //vec3 p2WC = (czm_view * vec4(p2,1.0)).xyz;
             if (t1 < depth && t1 > 0.5)
             {
                 teta = atan(p1.z, p1.x) / (2.0 * pi);
                 fall = (0.5 + 0.5 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
                 float s = 6.0;
 
-                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.45 * teta * r, 0.3 * p1.y + fall)).r);
-                s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(0.41 * p1.y + fall, -0.45 * teta * r)).r);
-                s *= smoothstep(snowThicknessThreshold - 0.05, 1.0, texture2D(u_texture, vec2(-(0.41 * p1.y + fall), 0.45 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.4 * teta * r, 0.1 * p1.y + fall)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.11 * p1.y + fall, -0.4 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(-(0.11 * p1.y + fall), 0.4 * teta * r)).r);
 
                 sum += s;
             }
@@ -96,12 +101,13 @@ float flakeVolume()
                 fall = (0.235 + 0.35 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
                 float s = 6.0;
 
-                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.35 * teta * r, 0.6 * p2.y + fall)).r);
-                s *= smoothstep(snowThicknessThreshold - 0.05, 1.0, texture2D(u_texture, vec2(-(0.31 * p2.y + fall), 0.45 * teta * r)).r);
-                s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(0.31 * p2.y + fall, -0.45 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.4 * teta * r, 0.1 * p2.y + fall)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(-(0.11 * p2.y + fall), 0.4 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.11 * p2.y + fall, -0.4 * teta * r)).r);
 
                 sum += s;
             }
+
         }
     }
     return sum / 2.0;
@@ -147,7 +153,7 @@ vec3 renderEverything(vec2 offset)
     float t = 10.0;
 
     float zDepth = texture2D(u_depthTexture, v_textureCoordinates).r;
-    vec4 posInCamera = toEye(v_textureCoordinates,depth);
+    vec4 posInCamera = toEye(v_textureCoordinates,zDepth);
     if ((zDepth > 0.0)&&(zDepth<1.0))
     {
         //pos and rayorigin and raydirection are all in camera space
@@ -167,6 +173,7 @@ vec3 renderEverything(vec2 offset)
     //{
         vec4 flake = screenSpaceBlizzard();
         col = flake.a * flake.rgb + (1.0 - flake.a) * col.rgb;
+        //col = flake.rgb;
     //}
 
     return col;
@@ -185,9 +192,11 @@ void main(void)
 
     vec3 colT0 = renderEverything(vec2(0.0));
     gTime += 0.01;
-    vec3 colT1 = renderEverything(vec2(0.05));
+    //vec3 colT1 = renderEverything(vec2(0.05));
+    vec3 colT1 = renderEverything(vec2(0.0));
     gTime += 0.01;
-    vec3 colT2 = renderEverything(vec2(0.1));
+    //vec3 colT2 = renderEverything(vec2(0.1));
+    vec3 colT2 = renderEverything(vec2(0.0));
     col = 0.25 * colT0 + 0.5 * colT1 + 0.25 * colT2;
 
     //gamma correct

@@ -33,22 +33,22 @@
         <td>
             <input type="range" min="1.0" max="500.0" step="1.0" data-bind="value: spacing, valueUpdate: 'input'">
         </td>
-		
+
 		<td>Snow Falling Speed</td>
         <td>
             <input type="range" min="0.2" max="1.0" step="0.1" data-bind="value: fallingSpeedData, valueUpdate: 'input'">
         </td>
-		
+
 		<td>Snow Thickness</td>
         <td>
             <input type="range" min="0.3" max="0.5" step="0.01" data-bind="value: thickThresholdData, valueUpdate: 'input'">
         </td>
-		
+
 		<td>Wind Direction</td>
         <td>
             <input type="range" min="0.2" max="1.0" step="0.1" data-bind="value: windDirectionData, valueUpdate: 'input'">
         </td>
-		
+
         <td>Snow Falling</td>
         <td>
             <input type="checkbox" data-bind="checked: snowFallingShow">
@@ -57,12 +57,18 @@
 </tbody>
 </table>
 </div>
+
+
+
 <script id="cesium_sandcastle_script">
 function startup(Cesium) {
+
+
     'use strict';
 //Sandcastle_Begin
 var viewer = new Cesium.Viewer('cesiumContainer');
 var scene = viewer.scene;
+var currentFrameNum = viewer.scene.frameState.frameNumber;
 var postProcess = scene.postProcess;
 var cesiumTerrainProviderMeshes = new Cesium.CesiumTerrainProvider({
     url : 'https://assets.agi.com/stk-terrain/v1/tilesets/world/tiles',
@@ -79,11 +85,13 @@ viewer.clockViewModel.currentTime = Cesium.JulianDate.fromDate(new Date(2017, 8,
 // The viewModel tracks the state of our mini application.
 var viewModel = {
     spacing : 100.0,
-	fallingSpeedData : 0.5,
+	fallingSpeedData : 0.2,
 	thickThresholdData: 0.3,
 	windDirectionData : 0.5,
 	snowFallingShow : false
 };
+
+
 
 function getColorRamp() {
     var ramp = document.createElement('canvas');
@@ -173,7 +181,7 @@ Sandcastle.addDefaultToolbarMenu([{
     text : 'Grand Canyon',
     onselect : function() {
         var target = new Cesium.Cartesian3.fromDegrees(-112.1130, 36.1070, 2500);
-        var offset = new Cesium.Cartesian3(6344.974098678562, -793.3419798081741, 2499.950886076316);
+        var offset = new Cesium.Cartesian3(-6857.40902037546, -793.3419798081741, 2147.5545426812023);
         viewer.camera.lookAt(target, offset);
         viewer.camera.lookAtTransform(Cesium.Matrix4.IDENTITY);
     }
@@ -235,8 +243,17 @@ Sandcastle.addToolbarMenu([{
     text : 'Snow Material',
     onselect : function() {
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
-        viewer.scene.globe.material.uniforms.normalMap = '../images/snowNormalMap2.jpg';
+        currentFrameNum = viewer.scene.frameState.frameNumber;
+        viewer.scene.globe.material.uniforms.accumulationStartTime = currentFrameNum;
+        currentFrameNum += 100.0;
+        viewer.scene.globe.material.uniforms.accumulationEndTime = currentFrameNum;
         viewer.scene.globe.material.uniforms.whiteNoise = '../images/coloredWhiteNoise.jpg';
+        viewer.scene.globe.material.uniforms.level1normalMap = '../images/snowNormalMapLevel1.jpg';
+        viewer.scene.globe.material.uniforms.level2normalMap = '../images/snowNormalMapLevel2.jpg';
+        viewer.scene.globe.material.uniforms.level3normalMap = '../images/snowNormalMapLevel3.jpg';
+        viewer.scene.globe.material.uniforms.level4normalMap = '../images/snowNormalMapLevel4.jpg';
+        viewer.scene.globe.material.uniforms.level5normalMap = '../images/snowNormalMapLevel5.jpg';
+        //console.log(currentFrameNum);
     }
 }], 'materialMenu');
 
@@ -252,7 +269,7 @@ Cesium.knockout.getObservable(viewModel, 'fallingSpeedData').subscribe(
     function(newValue) {
 		if(postProcess.snowFalling.show){
 			postProcess.snowFalling.uniformValues.fallSpeed = parseFloat(newValue);
-		}    
+		}
     }
 );
 
@@ -260,7 +277,7 @@ Cesium.knockout.getObservable(viewModel, 'thickThresholdData').subscribe(
     function(newValue) {
 		if(postProcess.snowFalling.show){
 			postProcess.snowFalling.uniformValues.snowThick = parseFloat(newValue);
-		}    
+		}
     }
 );
 
@@ -268,7 +285,7 @@ Cesium.knockout.getObservable(viewModel, 'windDirectionData').subscribe(
     function(newValue) {
 		if(postProcess.snowFalling.show){
 			postProcess.snowFalling.uniformValues.windDirection = parseFloat(newValue);
-		}    
+		}
     }
 );
 

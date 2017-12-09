@@ -158,6 +158,7 @@ void main()
     vec3 normalWithNoise = vec3(0.0); //Added by Yuxin for Snow Rendering
     float shiness = 0.0; //Added by Yuxin for Snow Rendering
     float specular = 0.0; //Added by Yuxin for Snow Rendering
+    bool isOcean = false; //Added by Yuxin to avoid applying material over the ocean area
 
 #ifdef SHOW_TILE_BOUNDARIES
     if (v_textureCoordinates.x < (1.0/256.0) || v_textureCoordinates.x > (255.0/256.0) ||
@@ -181,6 +182,8 @@ void main()
 
     if (mask > 0.0)
     {
+
+        isOcean = true; //Added by Yuxin to set flag isOcean to true so that no snow will cover the ocean area
         mat3 enuToEye = czm_eastNorthUpToEyeCoordinates(v_positionMC, normalEC);
 
         vec2 ellipsoidTextureCoordinates = czm_ellipsoidWgs84TextureCoordinates(normalMC);
@@ -193,6 +196,8 @@ void main()
 #endif
 
 #ifdef APPLY_MATERIAL
+//Added by Yuxin, only applying material when it is not an ocean
+if(!isOcean){
     czm_materialInput materialInput;
     materialInput.st = v_textureCoordinates.st;
     materialInput.str = vec3(gl_FragCoord.xy / czm_viewport.zw, -v_positionEC.z);
@@ -208,6 +213,7 @@ void main()
     shiness = material.shininess;
     normalWithNoise = material.normal;
     specular = material.specular;
+}
 #endif
 
 #ifdef ENABLE_VERTEX_LIGHTING
