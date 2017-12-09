@@ -22,7 +22,7 @@ float fade(float t) {
   return t*t*t*(t*(t*6.0-15.0)+10.0); // Improved fade, yields C2-continuous noise
 }
 // Scale is the extent of the square over which the noise repeats
-const  float SCALE = 100000.;
+float SCALE = 100000.;
 //ImageSize is the size of the image used for Random noise
 const float ImageSize = 256.;
 // Fraction Noise is the fraction of the noise to use to modify the
@@ -150,7 +150,8 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	// now this is really the model coordinate position
 	//vec2  posCoord = materialInput.positionToEyeEC.xz;
 	vec3 posCoord = materialInput.positionToEyeEC.xzy;
-	posCoord /= SCALE;
+	float far = float(czm_entireFrustum.y); // the far plane
+	posCoord *= 3 * far;
 	float noiseval = 0.;
         for(float idx = 0.; idx < orders; ++idx)
         {
@@ -162,12 +163,9 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	      noiseval += noise(posScaled);
 	}
         material.alpha += FractionNoise * noiseval;
-	if ( material.alpha < threshold) {
-	      material.alpha = 0.;
-	}
-	else if ( material.alpha > highthreshold) {
-	         material.alpha = 1.;
-        }
+	float transparency = unitSin(float(czm_frameNumber)/30.0);
+
+	material.alpha *= transparancy;
         return material;
 }
 
