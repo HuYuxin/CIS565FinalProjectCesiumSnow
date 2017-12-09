@@ -45,18 +45,32 @@ float flakeVolume()
 
     float snowThicknessThreshold = 1.0 - u_snowThick;
     vec3 snowDirection = normalize(czm_viewerPositionWC);
-    vec3 snowDirectionEC = (czm_view * vec4(snowDirection,0.0)).xyz;
-    //vec3 windForce = normalize(vec3(0.6,0.5,0.1));
-    //snowDirectionWC += windForce;
+    vec3 snowDirectionEC = normalize((czm_view * vec4(snowDirection,0.0)).xyz);
+
+    vec3 cameraDirectionEC = vec3(0.0,0.0,-1.0);
+    float cosineTheta = (dot(cameraDirectionEC,snowDirectionEC) / (length(cameraDirectionEC) * length(snowDirectionEC)));
+    vec3 perDirPoint = cameraDirectionEC - cosineTheta * snowDirectionEC;
+    vec3 perDirectionWC = normalize((czm_inverseView * vec4(perDirPoint.xyz,0.0)).xyz);
+
+    vec4 rayOriginWorldHomo = (czm_inverseView * vec4(ray.origin, 1.0));
+    vec3 rayOriginWorld = rayOriginWorldHomo.xyz / rayOriginWorldHomo.w;
+    vec3 rayDirectionWorld = (czm_inverseView * vec4(ray.direction, 0.0)).xyz;
+    rayDirectionWorld = normalize(rayDirectionWorld);
+
+    vec3 windForce = normalize(sin(u_windDirection) * (czm_view * vec4(0.6,0.5,0.1,0.0)).xyz);
+    snowDirectionEC += windForce;
     vec3 snowCamOri = ray.origin + 0.01 * snowDirectionEC;
 
     float fall;
     vec3 p1, p2;
     float teta;
     float t1, t2;
-    float a = pow(snowDirectionEC.x, 2.0) + pow(snowDirectionEC.y, 2.0);
-    float b = 2.0 * (snowDirectionEC.x * snowCamOri.x + snowDirectionEC.y * snowCamOri.y);
-    float c = pow(snowCamOri.x, 2.0) + pow(snowCamOri.y, 2.0);
+    //float a = pow(snowDirectionEC.x, 2.0) + pow(snowDirectionEC.y, 2.0);
+    //float b = 2.0 * (snowDirectionEC.x * snowCamOri.x + snowDirectionEC.y * snowCamOri.y);
+    //float c = pow(snowCamOri.x, 2.0) + pow(snowCamOri.y, 2.0);
+    float a = pow(rayDirectionWorld.x, 2.0) + pow(rayDirectionWorld.z, 2.0);
+    float b = 2.0 * (rayDirectionWorld.x * rayOriginWorld.x/6000000.0 + rayDirectionWorld.z * rayOriginWorld.z/6000000.0);
+    float c = pow(rayOriginWorld.x/6000000.0, 2.0) + pow(rayOriginWorld.z/6000000.0, 2.0);
     float ac4 = 4.0 * a*c;
     float a4 = 4.0 * a;
     float a2 = 2.0 * a;
@@ -72,17 +86,16 @@ float flakeVolume()
             t2 = (-b + sqrt(delta))/a2;
             p1 = ray.origin + t1 * ray.direction;
             p2 = ray.origin + t2 * ray.direction;
-            vec3 p1WC = (czm_view * vec4(p1,1.0)).xyz;
-            vec3 p2WC = (czm_view * vec4(p2,1.0)).xyz;
+            /*
             if (t1 < depth && t1 > 10.0)
             {
                 teta = atan(p1.z, p1.x) / (2.0 * pi);
                 fall = (0.235 + 0.235 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
-                float s = 5.0;
+                float s = 10.0;
 
                 s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.25 * teta * r, 0.3 * p1.y + fall)).r);
                 s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(0.21 * p1.y + fall, -0.45 * teta * r)).r);
-                s *= smoothstep(snowThicknessThreshold - 0.05, 1.0, texture2D(u_texture, vec2(-(0.21 * p1.y + fall), 0.45 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold + 0.1, 1.0, texture2D(u_texture, vec2(-(0.21 * p1.y + fall), 0.45 * teta * r)).r);
 
                 sum += s;
             }
@@ -90,11 +103,36 @@ float flakeVolume()
             {
                 teta = atan(p2.z, p2.x) / (2.0 * pi);
                 fall = (0.125 + 0.125 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
-                float s = 7.5;
+                float s = 10.0;
 
                 s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.125 * teta * r, 0.116 * p2.y + fall)).r);
-                s *= smoothstep(snowThicknessThreshold - 0.05, 1.0, texture2D(u_texture, vec2(-(0.11 * p2.y + fall), 0.09 * teta * r)).r);
-                s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(0.11 * p2.y + fall, -0.09 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold + 0.05, 1.0, texture2D(u_texture, vec2(-(0.11 * p2.y + fall), 0.09 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold + 0.1, 1.0, texture2D(u_texture, vec2(0.11 * p2.y + fall, -0.09 * teta * r)).r);
+
+                sum += s;
+            }
+            */
+            if (t1 < depth && t1 > 2.0)
+            {
+                teta = atan(p1.z, p1.x) / (2.0 * pi);
+                fall = (0.235 + 0.35 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
+                float s = 6.0;
+
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.4 * teta * r, 0.1 * p1.y + fall)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.11 * p1.y + fall, -0.4 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(-(0.11 * p1.y + fall), 0.4 * teta * r)).r);
+
+                sum += s;
+            }
+            if (t2 < depth && t2 > 0.0)
+            {
+                teta = atan(p2.z, p2.x) / (2.0 * pi);
+                fall = (0.235 + 0.35 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
+                float s = 6.0;
+
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.4 * teta * r, 0.1 * p2.y + fall)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(-(0.11 * p2.y + fall), 0.4 * teta * r)).r);
+                s *= smoothstep(snowThicknessThreshold, 1.0, texture2D(u_texture, vec2(0.11 * p2.y + fall, -0.4 * teta * r)).r);
 
                 sum += s;
             }
@@ -139,16 +177,18 @@ vec3 renderEverything(vec2 offset)
 
     float zDepth = texture2D(u_depthTexture, v_textureCoordinates).r;
     vec4 posInCamera = toEye(v_textureCoordinates,depth);
+    //depth = tmax;
+    depth = length(posInCamera.xyz - ray.origin);
     if (zDepth < 1.0)
     {
         //pos and rayorigin and raydirection are all in camera space
         //pos = ray.origin + t * ray.direction;
-        depth = length(posInCamera.xyz - ray.origin);
+        //depth = length(posInCamera.xyz - ray.origin);
         col = texture2D(u_colorTexture, v_textureCoordinates).rgb;
     }
     else
     {
-        depth = tmax;
+        //depth = tmax;
         col = vec3(texture2D(u_colorTexture, v_textureCoordinates).r);
     }
     vec4 flake = screenSpaceBlizzard();
@@ -164,7 +204,7 @@ void main(void)
     //if(cameraToCenter <= 6381000.0)
     //{
         //earthEllipsoid = czm_getWgs84EllipsoidEC();
-        gTime = czm_frameNumber/60.0;
+        gTime = mod(czm_frameNumber/60.0,8.0);
         uv = v_textureCoordinates;
         aspectRatio = czm_viewport.z / czm_viewport.w;
         p = -1.0 + 2.0 * uv;
