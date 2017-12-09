@@ -204,7 +204,7 @@ void main(void)
     //if(cameraToCenter <= 6381000.0)
     //{
         //earthEllipsoid = czm_getWgs84EllipsoidEC();
-        gTime = mod(czm_frameNumber/60.0,8.0);
+        gTime = mod(czm_frameNumber/60.0,12.0);
         uv = v_textureCoordinates;
         aspectRatio = czm_viewport.z / czm_viewport.w;
         p = -1.0 + 2.0 * uv;
