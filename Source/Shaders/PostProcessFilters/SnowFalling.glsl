@@ -161,14 +161,14 @@ vec3 renderEverything(vec2 offset)
     float zDepth = texture2D(u_depthTexture, v_textureCoordinates).r;
     vec4 posInCamera = toEye(v_textureCoordinates,zDepth);
     depth = length(posInCamera.xyz - ray.origin);
-    if (zDepth < 1.0)
-    {
+    //if (zDepth < 1.0)
+    //{
         col = texture2D(u_colorTexture, v_textureCoordinates).rgb;
-    }
-    else
-    {
-        col = vec3(texture2D(u_colorTexture, v_textureCoordinates).r);
-    }
+    //}
+    //else
+    //{
+       // col = vec3(texture2D(u_colorTexture, v_textureCoordinates).r);
+   // }
     vec4 flake = screenSpaceBlizzard();
     col = flake.a * flake.rgb + (1.0 - flake.a) * col.rgb;
 
