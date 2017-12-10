@@ -246,10 +246,11 @@ define([
         return new PostProcessStage({
             fragmentShader : SnowFalling,
             uniformValues : {
-                texture : buildModuleUrl('Assets/Textures/grayNoiseM1.png'),
+                texture : buildModuleUrl('Assets/Textures/grayNoiseM.png'),
+
                 fallSpeed : 0.3,
-                snowThick : 0.5,
-                windDirection : 3.0
+                snowThick : 0.3,
+                windDirection : 0.1
             }
         });
     }
