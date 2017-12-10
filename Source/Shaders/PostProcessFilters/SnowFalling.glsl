@@ -58,14 +58,14 @@ float flakeVolume()
     float teta;
     float t1, t2;
     float a = pow(rayDirectionWorld.x, 2.0) + pow(rayDirectionWorld.z, 2.0);
-    float b = 2.0 * (rayDirectionWorld.x * rayOriginWorld.x/600000.0 + rayDirectionWorld.z * rayOriginWorld.z/600000.0);
-    float c = pow(rayOriginWorld.x/600000.0, 2.0) + pow(rayOriginWorld.z/600000.0, 2.0);
+    float b = 2.0 * (rayDirectionWorld.x * rayOriginWorld.x/6000000.0 + rayDirectionWorld.z * rayOriginWorld.z/6000000.0);
+    float c = pow(rayOriginWorld.x/6000000.0, 2.0) + pow(rayOriginWorld.z/6000000.0, 2.0);
     float ac4 = 4.0 * a*c;
     float a4 = 4.0 * a;
     float a2 = 2.0 * a;
     float bb = b*b;
     float bbSubAC4 = bb - ac4;
-    for (float r = 1.0; r <= 16.0; r+=0.5)
+    for (float r = 1.0; r <= 8.0; r+=0.5)
     {
         float R = r + sin(pi * r * gTime * 0.05) / (r * 0.25);
         float delta = bbSubAC4 + a4 * R*R;

@@ -173,11 +173,13 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 
     mat3 tangentToEye = materialInput.tangentToEyeMatrix;
     material.normal  = tangentToEye * normalMapNormal;
+
+    //material.normal = materialInput.normalEC;
     material.specular = 0.9;
 
     // now this is really the model coordinate position
 	//vec2  posCoord = materialInput.positionToEyeEC.xz;
-	vec3 posCoord = materialInput.positionToEyeEC.xzy;
+    vec3 posCoord = materialInput.positionToEyeEC.xzy;
 	posCoord /= SCALE;
 	float noiseval = 0.;
     for(float idx = 0.; idx < orders; ++idx)
