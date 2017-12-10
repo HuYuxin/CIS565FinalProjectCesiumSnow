@@ -147,7 +147,6 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	float snowSlope = materialInput.slope;
 	material.alpha = snowSlope;
     material.diffuse = vec3(0.8, 0.8, 0.9);
-    vec3 normalEC = materialInput.normalEC;
     material.shininess = 200.0;
     float snowAccumulation = 0.0;
 

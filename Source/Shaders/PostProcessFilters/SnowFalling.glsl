@@ -58,8 +58,8 @@ float flakeVolume()
     float teta;
     float t1, t2;
     float a = pow(rayDirectionWorld.x, 2.0) + pow(rayDirectionWorld.z, 2.0);
-    float b = 2.0 * (rayDirectionWorld.x * rayOriginWorld.x/6000000.0 + rayDirectionWorld.z * rayOriginWorld.z/6000000.0);
-    float c = pow(rayOriginWorld.x/6000000.0, 2.0) + pow(rayOriginWorld.z/6000000.0, 2.0);
+    float b = 2.0 * (rayDirectionWorld.x * rayOriginWorld.x/600000.0 + rayDirectionWorld.z * rayOriginWorld.z/600000.0);
+    float c = pow(rayOriginWorld.x/600000.0, 2.0) + pow(rayOriginWorld.z/600000.0, 2.0);
     float ac4 = 4.0 * a*c;
     float a4 = 4.0 * a;
     float a2 = 2.0 * a;
@@ -164,8 +164,8 @@ vec3 renderEverything(vec2 offset)
     col = flake.a * flake.rgb + (1.0 - flake.a) * col.rgb;
     //vec4 fog = screenSpaceFog(pos);
     //col = fog.a * fog.rgb + (1.0 - fog.a) * col.rgb;
-    //vec4 ice = screenSpaceIce();
-    //col = ice.a * ice.rgb + (1.0 - ice.a) * col.rgb;
+    vec4 ice = screenSpaceIce();
+    col = ice.a * ice.rgb + (1.0 - ice.a) * col.rgb;
 
     return col;
 }
