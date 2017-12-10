@@ -9,7 +9,7 @@ Snow Rendering in Cesium
 
 [Anton Khabbaz](https://github.com/akhabbaz)
 
-[Yuxin Hu](www.huyuxin.net)
+[Yuxin Hu](https://www.huyuxin.net)
 
 ### Demo
 ![](/image/Demo7.gif)
