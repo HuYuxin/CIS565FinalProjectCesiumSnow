@@ -1,4 +1,4 @@
-Snow Rendering in Cesium
+﻿Snow Rendering in Cesium
 ========================
 
 **University of Pennsylvania, CIS 565: GPU Programming and Architecture, Final Project**
@@ -49,8 +49,37 @@ The goal of this project is to add snow rendering feature in Cesium. We approach
 ### Performance Analysis (Coming Soon)
 
 
-### Files Changed (Coming Soon)
+### Files Changed
 
+**Merged branch *Globe Materials* with branch *post-processing-1.0* into our master branch**
+
+#### 1. Snow Accumulation 
+
+- Added SnowMaterial.glsl in "..\Source\Shaders\Materials" to apply snow color over terrain. Inside includes perlin noise generation that will be added to alpha value of the material, which is based on the terrain slope.
+
+- Revised GlobeFS.glsl in "..\Source\Shaders\". Added variables in main() : normalWithNoise, shiness, and specular that will be assigned values in SnowMaterial.glsl. Added a boolean variable isOcean which will be assigned value if water mask is applied. This will ensure that material will only be added over terrain that is not Ocean. Modified ifdef APPLY_MATERIAL section to read extra values added in material. Modified #ifdef ENABLE_VERTEX_LIGHTING. We are checking if shiness read from material is bigger than 0, we used the modified normal read from material for shading and added a specular component in shading. 
+
+- Revised Material.js in "..\Source\Scene", added a new material SnowMaterial.
+
+#### 2. Snow Falling 
+
+- Added *SnowFalling.glsl* in "..\Source\Shaders\PostProcessFilters";
+
+- Revised *PostProcessLibrary.js* in "..\Source\Scene", a new post process stage called *createSnowFallingStage* added and a new fragment shader called *SnowFalling* linked to this post process stage;
+
+- Revised *PostProcessScene.js* in "..\Source\Scene", a new stage called *snowFalling* added;
+
+- Revised *Post Processing.html* in "..\Apps\Sandcastle\gallery", a new view model linked snow falling post process stage added to create snow falling effect based on the *depthTexture* in post process stage. 
+
+#### 3. Demo HTML
+- We added a demo html page to show our snow rendering feature, under Apps/Sandcastle/gallery/, named "SnowRendering.html".
+
+#### 4. Texture Images Added
+- Source\Assets\Textures\grayNoiseM.png. This texture is used to for snow flake sampling.
+
+- Under Apps\Sandcastle\images\, snowNormalMapLevel1.jpg, snowNormalMapLevel2.jpg, snowNormalMapLevel3.jpg, snowNormalMapLevel4.jpg, snowNormalMapLevel5.jpg. These normal maps are used for bumpy snow material over the terrain.
+
+- Under Apps\Sandcastle\images\RandomNoise256.png. This image is used for perlin noise generation.
 
 ### Credits
 
