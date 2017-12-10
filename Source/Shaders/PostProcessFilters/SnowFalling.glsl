@@ -45,7 +45,7 @@ float flakeVolume()
     float sum = 0.0;
 
     float snowThicknessThreshold = 1.0 - u_snowThick;
-    vec3 windForce = normalize(sin(u_windDirection) * (czm_view * vec4(0.6,0.5,0.1,0.0)).xyz);
+    vec3 windForce = normalize((czm_inverseView * vec4(sin(u_windDirection) * 0.6,0.1,-0.1 * sin(u_windDirection),0.0)).xyz);
     //rayDirectionWorld += windForce;
 
     vec4 rayOriginWorldHomo = (czm_inverseView * vec4(ray.origin, 1.0));
@@ -58,8 +58,8 @@ float flakeVolume()
     float teta;
     float t1, t2;
     float a = pow(rayDirectionWorld.x, 2.0) + pow(rayDirectionWorld.z, 2.0);
-    float b = 2.0 * (rayDirectionWorld.x * rayOriginWorld.x/6000000.0 + rayDirectionWorld.z * rayOriginWorld.z/6000000.0);
-    float c = pow(rayOriginWorld.x/6000000.0, 2.0) + pow(rayOriginWorld.z/6000000.0, 2.0);
+    float b = 2.0 * (rayDirectionWorld.x * rayOriginWorld.x/600000.0 + rayDirectionWorld.z * rayOriginWorld.z/600000.0);
+    float c = pow(rayOriginWorld.x/600000.0, 2.0) + pow(rayOriginWorld.z/600000.0, 2.0);
     float ac4 = 4.0 * a*c;
     float a4 = 4.0 * a;
     float a2 = 2.0 * a;
@@ -73,8 +73,8 @@ float flakeVolume()
         {
             t1 = (-b - sqrt(delta))/a2;
             t2 = (-b + sqrt(delta))/a2;
-            p1 = ray.origin + t1 * ray.direction;
-            p2 = ray.origin + t2 * ray.direction;
+            p1 = ray.origin + t1 * (ray.direction + 0.6 * windForce);
+            p2 = ray.origin + t2 * (ray.direction + 0.6 * windForce);
 
             teta = atan(p2.z, p2.x) / (2.0 * pi);
             fall = (0.235 + 0.235 * unitSin(r)) * fallSpeed * gTime  +  cos(r);
@@ -87,7 +87,7 @@ float flakeVolume()
             sum += s;
         }
     }
-    return sum / 2.0;
+    return sum;
 }
 vec4 screenSpaceBlizzard()
 {
@@ -161,7 +161,7 @@ void main(void)
     float cameraToCenter = length(czm_viewerPositionWC);
     //if(cameraToCenter <= 6381000.0)
     //{
-        gTime = mod(czm_frameNumber/60.0,60.0);
+        gTime = mod(czm_frameNumber/60.0,12.0);
         //gTime = czm_frameNumber / 60.0;
         uv = v_textureCoordinates;
         aspectRatio = czm_viewport.z / czm_viewport.w;
