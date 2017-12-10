@@ -11,30 +11,22 @@ Snow Rendering in Cesium
 
 [Yuxin Hu](www.huyuxin.net)
 
-### Overview
-
-
 ### Demo
-[](/image/Demo7.gif)
+![](/image/Demo7.gif)
 <p>Snow Rendering Over Grand Canyon</p>
 
-[](/image/Demo5.gif)
+![](/image/Demo5.gif)
 <p>Snow Rendering Over Bay Area</p>
 
 ### Debug Views
-[](/image/FinalDebugNormalEC.PNG)
-<p>Original Surface Normal in Eye Space</p>
 
 Normal Map                             |  Surface Normal with Normal Map
 :-------------------------------------:|:---------------------------------------------------:
+Original Terrain Surface Normal        |  ![](/image/FinalDebugNormalEC.PNG)
 ![](/image/snowNormalMapLevel1.jpg)    |  ![](/image/FinalDebugNormalMap1EC.PNG)
-:-------------------------------------:|:---------------------------------------------------:
 ![](/image/snowNormalMapLevel2.jpg)    |  ![](/image/FinalDebugNormalMap2EC.PNG)
-:-------------------------------------:|:---------------------------------------------------:
 ![](/image/snowNormalMapLevel3.jpg)    |  ![](/image/FinalDebugNormalMap3EC.PNG)
-:-------------------------------------:|:---------------------------------------------------:
 ![](/image/snowNormalMapLevel4.jpg)    |  ![](/image/FinalDebugNormalMap4EC.PNG)
-:-------------------------------------:|:---------------------------------------------------:
 ![](/image/snowNormalMapLevel5.jpg)    |  ![](/image/FinalDebugNormalMap5EC.PNG)
 
 
@@ -55,6 +47,9 @@ The goal of this project is to add snow rendering feature in Cesium. We approach
 
 
 ### Performance Analysis (Coming Soon)
+
+
+### Files Changed (Coming Soon)
 
 
 ### Credits
