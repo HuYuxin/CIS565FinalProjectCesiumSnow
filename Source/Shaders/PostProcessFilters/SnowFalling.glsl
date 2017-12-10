@@ -146,7 +146,7 @@ vec4 screenSpaceIce()
     vec2 texCoords = vec2(p.x, p.y);
     texCoords = vec2(cos(u) * texCoords.x - sin(u) * texCoords.y, cos(u) * texCoords.y + sin(u) * texCoords.x);
     float grain = 0.5 * (texture2D(u_texture, texCoords).r + texture2D(u_texture, 2.0 * texCoords).r);
-    float grainFactor = 0.2;
+    float grainFactor = 0.7;
     return vec4(0.8, 0.8, 1.0, ((1.0 - grainFactor) + grainFactor * grain) * 0.3 * (pow((abs(p.x) + abs(p.y)) * 0.5, 1.0) + pow(r / 1.6, 2.0)));
 }
 vec3 renderEverything(vec2 offset)
@@ -161,14 +161,14 @@ vec3 renderEverything(vec2 offset)
     float zDepth = texture2D(u_depthTexture, v_textureCoordinates).r;
     vec4 posInCamera = toEye(v_textureCoordinates,zDepth);
     depth = length(posInCamera.xyz - ray.origin);
-    //if (zDepth < 1.0)
-    //{
+    if (zDepth < 1.0)
+    {
         col = texture2D(u_colorTexture, v_textureCoordinates).rgb;
-    //}
-    //else
-    //{
-        //col = vec3(texture2D(u_colorTexture, v_textureCoordinates).r);
-    //}
+    }
+    else
+    {
+        col = vec3(texture2D(u_colorTexture, v_textureCoordinates).r);
+    }
     vec4 flake = screenSpaceBlizzard();
     col = flake.a * flake.rgb + (1.0 - flake.a) * col.rgb;
 
