@@ -18,6 +18,30 @@
 ![](/image/Demo5.gif)
 <p>Snow Rendering Over Bay Area</p>
 
+### Main Features 
+
+1. Snow Accumulation on Terrain 
+
+- New Snow Material 
+
+- Ocean Detection 
+
+- Gradually Accumulation Effect
+
+2. Snow Falling 
+
+- Snow Flakes
+
+- Gray Sky While Snowing 
+
+- Adjustable Falling Speed 
+
+- Adjustable Snow Heaviness 
+
+- Adjustable Wind Direction 
+
+- Snow Flakes Only Above the Horizon and Below 10000 Meters Above Sky 
+
 ### Debug Views
 
 Normal Map                             |  Surface Normal with Normal Map
