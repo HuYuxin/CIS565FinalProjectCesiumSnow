@@ -47,11 +47,12 @@ The goal of this project is to add snow rendering feature in Cesium. We approach
 
 
 ### Performance Analysis
-* Overall Performance Analysis
+**Overall Performance Analysis**
 ![](/image/PerformanceAnalysis01.PNG)
 
 The performance slows down when we apply the snow rendering. The bottleneck comes from both snow material and snow falling post processing. We did the performance analysis for both features individually to find out how we could improve the performance.
 
+**Snow Falling Performance Analysis**
 ![](/image/PerformanceAnalysis02.PNG)
 
 The snow falling post processing renders the snow flakes three times with different offsets to achieve anti-aliasing. Reducing the rendering passes will improve the efficiency slightly, but even one pass will slow down the system by 1/3. In each pass the glsl shader takes samples from the graynoise texture for 32 times with different uv coordinates to fill up the screen space with snow flakes. We tested performance by reducing the sampling times. Below is the result:
@@ -62,7 +63,7 @@ The snow falling post processing renders the snow flakes three times with differ
 
 Clearly the sampling times impact the performance. When the sampling times reduced to 8, the performance could match with the original system performance. However, the snow flakes will not be able to fill up the entire screen space with only 8 sampling times. From the second image above we observed that the texture image size does not affect the performance. Texture sampling part is the bottleneck of the snow falling particles rendering. If we could either reduce the number of sampling, or increase the performance of texture read itself, it would speed up the performance significantly.
 
-For snow material rendering, here is our performance analysis results.
+**Snow Material Performance Analysis**
 
 ![](/image/PerformanceAnalysis03.PNG)
 
@@ -74,6 +75,10 @@ We improved the performance slightly by reducing the sampling times in snow fall
 
 
 ### Files Changed (Coming Soon)
+
+
+### Build Guide
+Cesium has a very good documentation on how to build and compile the project on local machine. Please checkout here(Documentation/Contributors/BuildGuide)
 
 
 ### Credits
