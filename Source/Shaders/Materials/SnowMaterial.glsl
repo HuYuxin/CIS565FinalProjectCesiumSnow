@@ -1,11 +1,17 @@
-uniform sampler2D normalMap;
+uniform sampler2D level1normalMap;
 uniform sampler2D whiteNoise;
+uniform sampler2D level2normalMap;
+uniform sampler2D level3normalMap;
+uniform sampler2D level4normalMap;
+uniform sampler2D level5normalMap;
+uniform float accumulationStartTime;
+uniform float accumulationEndTime;
 
 
  /* Author: Stefan Gustavson ITN-LiTH (stegu@itn.liu.se) 2004-12-05
  * You may use, modify and redistribute this code free of charge,
  * provided that my name and this notice appears intact.
- *  The fade and the noise function are meant for a GLSL shader and 
+ *  The fade and the noise function are meant for a GLSL shader and
  *  were writtend by Stefan Gustavsson
  */
 
@@ -117,10 +123,10 @@ float noise(vec3 P)
   // We're done, return the final noise value.
   return n_xyz;
 }
-// returns the x - n * scale where n is the 
+// returns the x - n * scale where n is the
 // largest integer that keeps x positive
-// scale should be positive. 
-// 
+// scale should be positive.
+//
 // takes the fractional part of pos ( pos - floor(pos))
 // which is guaranteed to be between 0 and 1 and scale it
 // by scale
@@ -132,7 +138,7 @@ vec3  ScaleCoordinate(vec3 pos, float scale)
 {
          return fract(pos) * scale;
 }
-      
+
 czm_material czm_getMaterial(czm_materialInput materialInput)
 {
     czm_material material = czm_getDefaultMaterial(materialInput);
@@ -140,33 +146,59 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 	//Added by Yuxin For Test
 	float snowSlope = materialInput.slope;
 	material.alpha = snowSlope;
-        material.diffuse = vec3(0.8, 0.8, 0.9);
-        vec3 normalEC = materialInput.normalEC;
-        material.shininess = 200.0;
-        vec3 normalMapNormal = texture2D(normalMap, materialInput.st).rgb;
-        mat3 tangentToEye = materialInput.tangentToEyeMatrix;
-        material.normal  = tangentToEye * normalMapNormal;
-        material.specular = 0.9;
-	// now this is really the model coordinate position
-	//vec2  posCoord = materialInput.positionToEyeEC.xz;
-	vec3 posCoord = materialInput.positionToEyeEC.xzy;
-	float far = float(czm_entireFrustum.y); // the far plane
-	posCoord *= 3 * far;
-	float noiseval = 0.;
-        for(float idx = 0.; idx < orders; ++idx)
-        {
-	      // take multiples of the position coordinate
-	      // to sample different regions of the texture
-	      vec3 posScaled = idx * posCoord;
-	      float amplitude = pow (persistance, idx);
-	      posScaled = amplitude * ScaleCoordinate(posCoord, ImageSize);
-	      noiseval += noise(posScaled);
-	}
-        material.alpha += FractionNoise * noiseval;
-	float transparency = unitSin(float(czm_frameNumber)/30.0);
+    material.diffuse = vec3(0.8, 0.8, 0.9);
+    material.shininess = 200.0;
+    float snowAccumulation = 0.0;
 
-	material.alpha *= transparancy;
-        return material;
+    float interval = accumulationEndTime - accumulationStartTime;
+    float lapse = czm_frameNumber - accumulationStartTime;
+    if(lapse < 1.5 * interval){
+        snowAccumulation = lapse / interval;
+    }else{
+        snowAccumulation = 1.5;
+    }
+
+    vec3 normalMapNormal = vec3(0.0, 0.0, 1.0);
+    if(snowAccumulation < 0.3){
+        normalMapNormal = texture2D(level1normalMap, materialInput.st).rgb;
+    }else if(snowAccumulation < 0.7){
+        normalMapNormal = texture2D(level2normalMap, materialInput.st).rgb;
+    }else if(snowAccumulation < 1.0){
+        normalMapNormal = texture2D(level3normalMap, materialInput.st).rgb;
+    }else if(snowAccumulation < 1.3){
+        normalMapNormal = texture2D(level4normalMap, materialInput.st).rgb;
+    }else{
+        normalMapNormal = texture2D(level5normalMap, materialInput.st).rgb;
+    }
+
+    mat3 tangentToEye = materialInput.tangentToEyeMatrix;
+    material.normal  = tangentToEye * normalMapNormal;
+
+    //material.normal = materialInput.normalEC;
+    material.specular = 0.9;
+    // now this is really the model coordinate position
+    //vec2  posCoord = materialInput.positionToEyeEC.xz;
+    vec3 posCoord = materialInput.positionToEyeEC.xzy;
+    posCoord /= czm_currentFrustum.y/2.;
+    float noiseval = 0.;
+    for(float idx = 0.; idx < orders; ++idx)
+    {
+	    // take multiples of the position coordinate
+	    // to sample different regions of the texture
+	    vec3 posScaled = idx * posCoord;
+	    float amplitude = pow (persistance, idx);
+	    posScaled = amplitude * ScaleCoordinate(posCoord, ImageSize);
+	    noiseval += noise(posScaled);
+    }
+    material.alpha += FractionNoise * noiseval;
+    material.alpha *= snowAccumulation;
+    if ( material.alpha < threshold) {
+	    material.alpha = 0.;
+	}
+	else if ( material.alpha > highthreshold) {
+	     material.alpha = 1.;
+    }
+    return material;
 }
 
 
