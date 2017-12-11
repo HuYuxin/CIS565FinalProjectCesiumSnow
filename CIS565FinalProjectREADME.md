@@ -22,7 +22,12 @@
 #### Online Video Demo 
 
 
-[![enter image description here](https://lh3.googleusercontent.com/-go0AvZwgT88/Wi7CGrf0B8I/AAAAAAAABT8/UFzKWsNmRyok10OIuDC2dLlAFUSlzX1bwCLcBGAs/s0/VideoCoverImage.PNG "VideoCoverImage.PNG") ](https://youtu.be/EuK4rBXwmL8)
+[![enter image description here](https://lh3.googleusercontent.com/-go0AvZwgT88/Wi7CGrf0B8I/AAAAAAAABT8/UFzKWsNmRyok10OIuDC2dLlAFUSlzX1bwCLcBGAs/s0/VideoCoverImage.PNG "VideoCoverImage.PNG") ]( https://youtu.be/EuK4rBXwmL8 )
+
+
+#### Live Demo (Github page) Link
+
+[ Live Demo (Github Page) ](https://huyuxin.github.io/CIS565FinalProjectCesiumSnow/Apps/Sandcastle/gallery/SnowRendering.html)
 
 
 ### Main Features 
