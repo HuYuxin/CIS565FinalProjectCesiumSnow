@@ -146,7 +146,7 @@ vec4 screenSpaceIce()
     vec2 texCoords = vec2(p.x, p.y);
     texCoords = vec2(cos(u) * texCoords.x - sin(u) * texCoords.y, cos(u) * texCoords.y + sin(u) * texCoords.x);
     float grain = 0.5 * (texture2D(u_texture, texCoords).r + texture2D(u_texture, 2.0 * texCoords).r);
-    float grainFactor = 0.8;
+    float grainFactor = 0.4;
     return vec4(0.8, 0.8, 1.0, ((1.0 - grainFactor) + grainFactor * grain) * 0.3 * (pow((abs(p.x) + abs(p.y)) * 0.5, 1.0) + pow(r / 1.6, 2.0)));
 }
 vec3 renderEverything(vec2 offset)
@@ -161,6 +161,11 @@ vec3 renderEverything(vec2 offset)
     float zDepth = texture2D(u_depthTexture, v_textureCoordinates).r;
     vec4 posInCamera = toEye(v_textureCoordinates,zDepth);
     depth = length(posInCamera.xyz - ray.origin);
+    //**************************************************************************
+    //*** the if-else structure will control whether we have gray sky while it is snowing
+    //*** if it is turned on, the gray sky will show when it snows
+    //*** if it is turned off, the sky will not change
+    //**************************************************************************
     //if (zDepth < 1.0)
     //{
         col = texture2D(u_colorTexture, v_textureCoordinates).rgb;
@@ -169,6 +174,11 @@ vec3 renderEverything(vec2 offset)
     //{
        // col = vec3(texture2D(u_colorTexture, v_textureCoordinates).r);
    // }
+
+   //**************************************************************************
+   //*** those code down here demonstrates the snow flake effect
+   //*** and screen space fog and ice effect
+   //**************************************************************************
     vec4 flake = screenSpaceBlizzard();
     col = flake.a * flake.rgb + (1.0 - flake.a) * col.rgb;
 
@@ -182,6 +192,10 @@ vec3 renderEverything(vec2 offset)
 void main(void)
 {
     float cameraToCenter = length(czm_viewerPositionWC);
+    //*********************************************************************
+    //*** this if-else structure controls the altitude of snowing
+    //*** if it is turned off, there will be snow flakes in the universe
+    //*********************************************************************
     if((cameraToCenter <= 6381000.0)&&(cameraToCenter >= 6371000.0))
     {
         gTime = mod(czm_frameNumber/60.0,12.0);
@@ -192,6 +206,11 @@ void main(void)
         p.x = p.x * aspectRatio;
         vec3 col = vec3(0.0);
 
+        //******************************************************************
+        //*** renderEverything function will make the snow falling effect more realistic
+        //*** if it is run multiple times
+        //*** we only run it one time to speed up the performance
+        //*******************************************************************
         //vec3 colT0 = renderEverything(vec2(0.0));
         //gTime += 0.01;
         //vec3 colT1 = renderEverything(vec2(0.05));
