@@ -43,7 +43,7 @@ Slope Without Perlin Noise             |  Slope With Perlin Noise
 
 
 ### Overview of Technique
-The goal of this project is to add snow rendering feature in Cesium. We approached the problem from two parts. For snow falling particles, we referred to the ray marching sampling method in Shadertoy(https://www.shadertoy.com/view/ltfGzn). For snow accumulation on ground, we applied a Cesium snow material over the terrain. The idea is taken from paper Real-time Rendering of Accumulated Snow(http://www.ep.liu.se/ecp/013/007/ecp01307.pdf). The snow material has a fixed diffuse color, and a fixed specular term. The alpha value of snow material is depending on the slope value of the terrain fragment. We added Perlin noise to slope and normal maps to make the snow looks more realistic. We finally we made the slope and normal maps as a function of time to animate the snow accumulation process.
+The goal of this project is to add snow rendering feature in Cesium. We approached the problem from two parts. For snow falling particles, we referred to the ray marching sampling method in [Shadertoy](https://www.shadertoy.com/view/ltfGzn). For snow accumulation on ground, we applied a Cesium snow material over the terrain. The idea is taken from paper [Real-time Rendering of Accumulated Snow](http://www.ep.liu.se/ecp/013/007/ecp01307.pdf). The snow material has a fixed diffuse color, and a fixed specular term. The alpha value of snow material is depending on the slope value of the terrain fragment. We added Perlin noise to slope and normal maps to make the snow looks more realistic. We finally we made the slope and normal maps as a function of time to animate the snow accumulation process.
 
 
 ### Performance Analysis
@@ -78,7 +78,7 @@ We improved the performance slightly by reducing the sampling times in snow fall
 
 
 ### Build Guide
-Cesium has a very good documentation on how to build and compile the project on local machine. Please checkout here(Documentation/Contributors/BuildGuide)
+Cesium has a very good documentation on how to build and compile the project on local machine. Please checkout [here](Documentation/Contributors/BuildGuide)
 
 
 ### Credits
