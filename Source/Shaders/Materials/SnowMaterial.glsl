@@ -180,7 +180,8 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
     // now this is really the model coordinate position
 	//vec2  posCoord = materialInput.positionToEyeEC.xz;
     vec3 posCoord = materialInput.positionToEyeEC.xzy;
-	posCoord /= SCALE;
+       
+	posCoord /= czm_currentFrustum.y/2.;
 	float noiseval = 0.;
     for(float idx = 0.; idx < orders; ++idx)
     {
