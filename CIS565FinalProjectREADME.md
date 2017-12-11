@@ -18,6 +18,13 @@
 ![](/image/Demo5.gif)
 <p>Snow Rendering Over Bay Area</p>
 
+
+#### Online Video Demo 
+
+
+[![enter image description here](https://lh3.googleusercontent.com/-go0AvZwgT88/Wi7CGrf0B8I/AAAAAAAABT8/UFzKWsNmRyok10OIuDC2dLlAFUSlzX1bwCLcBGAs/s0/VideoCoverImage.PNG "VideoCoverImage.PNG")](https://youtu.be/EuK4rBXwmL8)
+
+
 ### Main Features 
 
 1. Snow Accumulation on Terrain 
@@ -27,6 +34,8 @@
 - Ocean Detection 
 
 - Gradually Accumulation Effect
+
+- Perlin Noise on Slope
 
 2. Snow Falling 
 
