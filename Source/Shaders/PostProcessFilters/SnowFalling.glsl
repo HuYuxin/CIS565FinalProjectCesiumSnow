@@ -196,7 +196,7 @@ void main(void)
     //*** this if-else structure controls the altitude of snowing
     //*** if it is turned off, there will be snow flakes in the universe
     //*********************************************************************
-    if((cameraToCenter <= 6381000.0)&&(cameraToCenter >= 6371000.0))
+    if((cameraToCenter <= 6382000.0)&&(cameraToCenter >= 6371000.0))
     {
         gTime = mod(czm_frameNumber/60.0,12.0);
         //gTime = czm_frameNumber / 60.0;
