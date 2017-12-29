@@ -1,24 +1,21 @@
-uniform sampler2D level1normalMap;
-uniform sampler2D whiteNoise;
-uniform sampler2D level2normalMap;
-uniform sampler2D level3normalMap;
-uniform sampler2D level4normalMap;
-uniform sampler2D level5normalMap;
-uniform float accumulationStartTime;
-uniform float accumulationEndTime;
-
-// Scale is the extent of the square over which the noise repeats
-float SCALE = 100000.; //not in use
+uniform sampler2D u_level1normalMap;
+uniform sampler2D u_level2normalMap;
+uniform sampler2D u_level3normalMap;
+uniform sampler2D u_level4normalMap;
+uniform sampler2D u_level5normalMap;
+uniform float u_accumulationStartTime;
+uniform float u_accumulationEndTime;
 
 
-//ImageSize is the size of the image used for Random noise
-const float ImageSize = 256.;
-// Fraction Noise is the fraction of the noise to use to modify the
-// blend coefficient.
-const float FractionNoise = 0.3;
-const float persistance =  0.6;
+//IMAGE_SIZE is the size of the image used for Random noise
+const float IMAGE_SIZE = 256.;
+
+// FRACTION_NOISE is the fraction of the noise to use to modify the blend coefficient.
+const float FRACTION_NOISE = 0.3;
+const float PERSISTANCE =  0.6;
+
 // orders are the number of orders to sum
-const float  orders = 3.;
+const float  ORDERS = 3.;
 
 
 // the base noise functions came from Ian McEwan and Stephan Gustavson.
@@ -35,15 +32,18 @@ const float  orders = 3.;
 //               https://github.com/stegu/webgl-noise
 //
 
-vec3 mod289(vec3 x) {
+vec3 mod289(vec3 x)
+{
   return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
 
-vec4 mod289(vec4 x) {
+vec4 mod289(vec4 x)
+{
   return x - floor(x * (1.0 / 289.0)) * 289.0;
 }
 
-vec4 permute(vec4 x) {
+vec4 permute(vec4 x)
+{
      return mod289(((x*34.0)+1.0)*x);
 }
 
@@ -53,79 +53,72 @@ vec4 taylorInvSqrt(vec4 r)
 }
 
 float snoise(vec3 v)
-  {
-  const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
-  const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
+{
+    const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
+    const vec4  D = vec4(0.0, 0.5, 1.0, 2.0);
 
-// First corner
-  vec3 i  = floor(v + dot(v, C.yyy) );
-  vec3 x0 =   v - i + dot(i, C.xxx) ;
+    // First corner
+    vec3 i  = floor(v + dot(v, C.yyy) );
+    vec3 x0 =   v - i + dot(i, C.xxx) ;
 
-// Other corners
-  vec3 g = step(x0.yzx, x0.xyz);
-  vec3 l = 1.0 - g;
-  vec3 i1 = min( g.xyz, l.zxy );
-  vec3 i2 = max( g.xyz, l.zxy );
+    // Other corners
+    vec3 g = step(x0.yzx, x0.xyz);
+    vec3 l = 1.0 - g;
+    vec3 i1 = min( g.xyz, l.zxy );
+    vec3 i2 = max( g.xyz, l.zxy );
 
-  //   x0 = x0 - 0.0 + 0.0 * C.xxx;
-  //   x1 = x0 - i1  + 1.0 * C.xxx;
-  //   x2 = x0 - i2  + 2.0 * C.xxx;
-  //   x3 = x0 - 1.0 + 3.0 * C.xxx;
-  vec3 x1 = x0 - i1 + C.xxx;
-  vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
-  vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y
+    vec3 x1 = x0 - i1 + C.xxx;
+    vec3 x2 = x0 - i2 + C.yyy; // 2.0*C.x = 1/3 = C.y
+    vec3 x3 = x0 - D.yyy;      // -1.0+3.0*C.x = -0.5 = -D.y
 
-// Permutations
-  i = mod289(i);
-  vec4 p = permute( permute( permute(
+    // Permutations
+    i = mod289(i);
+    vec4 p = permute( permute( permute(
              i.z + vec4(0.0, i1.z, i2.z, 1.0 ))
            + i.y + vec4(0.0, i1.y, i2.y, 1.0 ))
            + i.x + vec4(0.0, i1.x, i2.x, 1.0 ));
 
-// Gradients: 7x7 points over a square, mapped onto an octahedron.
-// The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
-  float n_ = 0.142857142857; // 1.0/7.0
-  vec3  ns = n_ * D.wyz - D.xzx;
+    // Gradients: 7x7 points over a square, mapped onto an octahedron.
+    // The ring size 17*17 = 289 is close to a multiple of 49 (49*6 = 294)
+    float n_ = 0.142857142857; // 1.0/7.0
+    vec3  ns = n_ * D.wyz - D.xzx;
 
-  vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
+    vec4 j = p - 49.0 * floor(p * ns.z * ns.z);  //  mod(p,7*7)
 
-  vec4 x_ = floor(j * ns.z);
-  vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
+    vec4 x_ = floor(j * ns.z);
+    vec4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
 
-  vec4 x = x_ *ns.x + ns.yyyy;
-  vec4 y = y_ *ns.x + ns.yyyy;
-  vec4 h = 1.0 - abs(x) - abs(y);
+    vec4 x = x_ *ns.x + ns.yyyy;
+    vec4 y = y_ *ns.x + ns.yyyy;
+    vec4 h = 1.0 - abs(x) - abs(y);
 
-  vec4 b0 = vec4( x.xy, y.xy );
-  vec4 b1 = vec4( x.zw, y.zw );
+    vec4 b0 = vec4( x.xy, y.xy );
+    vec4 b1 = vec4( x.zw, y.zw );
 
-  //vec4 s0 = vec4(lessThan(b0,0.0))*2.0 - 1.0;
-  //vec4 s1 = vec4(lessThan(b1,0.0))*2.0 - 1.0;
-  vec4 s0 = floor(b0)*2.0 + 1.0;
-  vec4 s1 = floor(b1)*2.0 + 1.0;
-  vec4 sh = -step(h, vec4(0.0));
+    vec4 s0 = floor(b0)*2.0 + 1.0;
+    vec4 s1 = floor(b1)*2.0 + 1.0;
+    vec4 sh = -step(h, vec4(0.0));
 
-  vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
-  vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
+    vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy ;
+    vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww ;
 
-  vec3 p0 = vec3(a0.xy,h.x);
-  vec3 p1 = vec3(a0.zw,h.y);
-  vec3 p2 = vec3(a1.xy,h.z);
-  vec3 p3 = vec3(a1.zw,h.w);
+    vec3 p0 = vec3(a0.xy,h.x);
+    vec3 p1 = vec3(a0.zw,h.y);
+    vec3 p2 = vec3(a1.xy,h.z);
+    vec3 p3 = vec3(a1.zw,h.w);
 
-//Normalise gradients
-  vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
-  p0 *= norm.x;
-  p1 *= norm.y;
-  p2 *= norm.z;
-  p3 *= norm.w;
+    //Normalise gradients
+    vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2, p2), dot(p3,p3)));
+    p0 *= norm.x;
+    p1 *= norm.y;
+    p2 *= norm.z;
+    p3 *= norm.w;
 
-// Mix final noise value
-  vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
-  m = m * m;
-  return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
-                                dot(p2,x2), dot(p3,x3) ) );
-  }
+    // Mix final noise value
+    vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+    m = m * m;
+    return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3) ) );
+}
 
 
 // returns the x - n * scale where n is the
@@ -144,16 +137,14 @@ vec3  ScaleCoordinate(vec3 pos, float scale)
 czm_material czm_getMaterial(czm_materialInput materialInput)
 {
     czm_material material = czm_getDefaultMaterial(materialInput);
-
-	//Added by Yuxin For Test
 	float snowSlope = materialInput.slope;
 	material.alpha = snowSlope;
     material.diffuse = vec3(0.8, 0.8, 0.9);
     material.shininess = 200.0;
     float snowAccumulation = 0.0;
 
-    float interval = accumulationEndTime - accumulationStartTime;
-    float lapse = czm_frameNumber - accumulationStartTime;
+    float interval = u_accumulationEndTime - u_accumulationStartTime;
+    float lapse = czm_frameNumber - u_accumulationStartTime;
     if(lapse < 1.5 * interval){
         snowAccumulation = lapse / interval;
     }else{
@@ -162,43 +153,37 @@ czm_material czm_getMaterial(czm_materialInput materialInput)
 
     vec3 normalMapNormal = vec3(0.0, 0.0, 1.0);
     if(snowAccumulation < 0.3){
-        normalMapNormal = texture2D(level1normalMap, materialInput.st).rgb;
+        normalMapNormal = texture2D(u_level1normalMap, materialInput.st).rgb;
     }else if(snowAccumulation < 0.7){
-        normalMapNormal = texture2D(level2normalMap, materialInput.st).rgb;
+        normalMapNormal = texture2D(u_level2normalMap, materialInput.st).rgb;
     }else if(snowAccumulation < 1.0){
-        normalMapNormal = texture2D(level3normalMap, materialInput.st).rgb;
+        normalMapNormal = texture2D(u_level3normalMap, materialInput.st).rgb;
     }else if(snowAccumulation < 1.3){
-        normalMapNormal = texture2D(level4normalMap, materialInput.st).rgb;
+        normalMapNormal = texture2D(u_level4normalMap, materialInput.st).rgb;
     }else{
-        normalMapNormal = texture2D(level5normalMap, materialInput.st).rgb;
+        normalMapNormal = texture2D(u_level5normalMap, materialInput.st).rgb;
     }
 
     mat3 tangentToEye = materialInput.tangentToEyeMatrix;
     material.normal  = tangentToEye * normalMapNormal;
 
     material.specular = 0.9;
+
     // now this is really the model coordinate position
-    //vec2  posCoord = materialInput.positionToEyeEC.xz;
     vec3 posCoord = materialInput.positionToEyeEC.xzy;
     posCoord /= czm_entireFrustum.y/10.0;
     float noiseval = 0.;
-    for(float idx = 0.; idx < orders; ++idx)
+    for(float idx = 0.; idx < ORDERS; ++idx)
     {
 	    // take multiples of the position coordinate
 	    // to sample different regions of the texture
 	    vec3 posScaled = idx * posCoord;
-	    float amplitude = pow (persistance, idx);
-	    posScaled = amplitude * ScaleCoordinate(posCoord, ImageSize);
+	    float amplitude = pow (PERSISTANCE, idx);
+	    posScaled = amplitude * ScaleCoordinate(posCoord, IMAGE_SIZE);
 	    noiseval += snoise(posScaled);
     }
-    material.alpha += FractionNoise * noiseval;
+    material.alpha += FRACTION_NOISE * noiseval;
     material.alpha *= snowAccumulation;
-    /*if ( material.alpha < threshold) {
-	    material.alpha = 0.;
-	}
-	else if ( material.alpha > highthreshold) {
-	     material.alpha = 1.;
-    }*/
     return material;
 }
 

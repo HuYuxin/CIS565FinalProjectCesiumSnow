@@ -236,35 +236,31 @@ Sandcastle.addToolbarMenu([{
     text : 'Snow',
     onselect : function() {
         postProcess.snowFalling.show = true;
-
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
         currentFrameNum = viewer.scene.frameState.frameNumber;
-        viewer.scene.globe.material.uniforms.accumulationStartTime = currentFrameNum;
+        viewer.scene.globe.material.uniforms.u_accumulationStartTime = currentFrameNum;
         currentFrameNum += 100.0;
-        viewer.scene.globe.material.uniforms.accumulationEndTime = currentFrameNum;
-        viewer.scene.globe.material.uniforms.whiteNoise = '../images/coloredWhiteNoise.jpg';
-        viewer.scene.globe.material.uniforms.level1normalMap = '../images/snowNormalMapLevel1.jpg';
-        viewer.scene.globe.material.uniforms.level2normalMap = '../images/snowNormalMapLevel2.jpg';
-        viewer.scene.globe.material.uniforms.level3normalMap = '../images/snowNormalMapLevel3.jpg';
-        viewer.scene.globe.material.uniforms.level4normalMap = '../images/snowNormalMapLevel4.jpg';
-        viewer.scene.globe.material.uniforms.level5normalMap = '../images/snowNormalMapLevel5.jpg';
+        viewer.scene.globe.material.uniforms.u_accumulationEndTime = currentFrameNum;
+        viewer.scene.globe.material.uniforms.u_level1normalMap = '../images/snowNormalMapLevel1.jpg';
+        viewer.scene.globe.material.uniforms.u_level2normalMap = '../images/snowNormalMapLevel2.jpg';
+        viewer.scene.globe.material.uniforms.u_level3normalMap = '../images/snowNormalMapLevel3.jpg';
+        viewer.scene.globe.material.uniforms.u_level4normalMap = '../images/snowNormalMapLevel4.jpg';
+        viewer.scene.globe.material.uniforms.u_level5normalMap = '../images/snowNormalMapLevel5.jpg';
     }
 },  {
     text : 'Snow On Ground',
     onselect : function() {
         postProcess.snowFalling.show = false;
-
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
         currentFrameNum = viewer.scene.frameState.frameNumber;
-        viewer.scene.globe.material.uniforms.accumulationStartTime = currentFrameNum;
+        viewer.scene.globe.material.uniforms.u_accumulationStartTime = currentFrameNum;
         currentFrameNum += 500.0;
-        viewer.scene.globe.material.uniforms.accumulationEndTime = currentFrameNum;
-        viewer.scene.globe.material.uniforms.whiteNoise = '../images/coloredWhiteNoise.jpg';
-        viewer.scene.globe.material.uniforms.level1normalMap = '../images/snowNormalMapLevel1.jpg';
-        viewer.scene.globe.material.uniforms.level2normalMap = '../images/snowNormalMapLevel2.jpg';
-        viewer.scene.globe.material.uniforms.level3normalMap = '../images/snowNormalMapLevel3.jpg';
-        viewer.scene.globe.material.uniforms.level4normalMap = '../images/snowNormalMapLevel4.jpg';
-        viewer.scene.globe.material.uniforms.level5normalMap = '../images/snowNormalMapLevel5.jpg';
+        viewer.scene.globe.material.uniforms.u_accumulationEndTime = currentFrameNum;
+        viewer.scene.globe.material.uniforms.u_level1normalMap = '../images/snowNormalMapLevel1.jpg';
+        viewer.scene.globe.material.uniforms.u_level2normalMap = '../images/snowNormalMapLevel2.jpg';
+        viewer.scene.globe.material.uniforms.u_level3normalMap = '../images/snowNormalMapLevel3.jpg';
+        viewer.scene.globe.material.uniforms.u_level4normalMap = '../images/snowNormalMapLevel4.jpg';
+        viewer.scene.globe.material.uniforms.u_level5normalMap = '../images/snowNormalMapLevel5.jpg';
     }
 }], 'materialMenu');
 

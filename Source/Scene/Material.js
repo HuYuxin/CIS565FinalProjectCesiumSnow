@@ -1560,14 +1560,13 @@ define([
         fabric : {
             type : Material.SnowMaterialMaterialType,
             uniforms : {
-				whiteNoise: Material.DefaultImageId,
-                level1normalMap: Material.DefaultImageId,
-				level2normalMap: Material.DefaultImageId,
-				level3normalMap: Material.DefaultImageId,
-				level4normalMap: Material.DefaultImageId,
-				level5normalMap: Material.DefaultImageId,
-				accumulationEndTime: 1000.0,
-				accumulationStartTime: 1.0
+                u_level1normalMap: Material.DefaultImageId,
+				u_level2normalMap: Material.DefaultImageId,
+				u_level3normalMap: Material.DefaultImageId,
+				u_level4normalMap: Material.DefaultImageId,
+				u_level5normalMap: Material.DefaultImageId,
+				u_accumulationEndTime: 1000.0,
+				u_accumulationStartTime: 1.0
             },
             source : SnowMaterial
         },
