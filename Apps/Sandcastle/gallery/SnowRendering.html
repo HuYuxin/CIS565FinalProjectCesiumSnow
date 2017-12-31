@@ -27,27 +27,6 @@
 <div id="materialMenu"></div>
 <div id="zoomButtons"></div>
 <div id="sampleButtons"></div>
-<table><tbody>
-    <tr>
-		<td>Snow Falling Speed</td>
-        <td>
-            <input type="range" min="0.1" max="1.0" step="0.1" data-bind="value: fallingSpeedData, valueUpdate: 'input'">
-        </td>
-    </tr>
-    <tr>
-		<td>Snow Thickness</td>
-        <td>
-            <input type="range" min="0.3" max="0.5" step="0.01" data-bind="value: thickThresholdData, valueUpdate: 'input'">
-        </td>
-    </tr>
-    <tr>
-		<td>Wind Force</td>
-        <td>
-            <input type="range" min="0.1" max="6.28" step="0.1" data-bind="value: windDirectionData, valueUpdate: 'input'">
-        </td>
-    </tr>
-</tbody>
-</table>
 </div>
 
 
@@ -74,13 +53,6 @@ viewer.scene.globe.enableLighting = true;
 // Set the clock so the lighting looks good on the initial viewpoint.
 viewer.clockViewModel.currentTime = Cesium.JulianDate.fromDate(new Date(2017, 8, 22, 0, 0, 0));
 
-// The viewModel tracks the state of our mini application.
-var viewModel = {
-	fallingSpeedData : 0.3,
-	thickThresholdData: 0.3,
-	windDirectionData : 0.1
-};
-
 
 
 function getColorRamp() {
@@ -101,37 +73,6 @@ function getColorRamp() {
     return ramp;
 }
 
-// Convert the viewModel members into knockout observables.
-Cesium.knockout.track(viewModel);
-
-// Bind the viewModel to the DOM elements of the UI that call for it.
-var toolbar = document.getElementById('toolbar');
-Cesium.knockout.applyBindings(viewModel, toolbar);
-
-
-Cesium.knockout.getObservable(viewModel, 'fallingSpeedData').subscribe(
-    function(newValue) {
-		if(postProcess.snowFalling.show){
-			postProcess.snowFalling.uniformValues.fallSpeed = parseFloat(newValue);
-		}
-    }
-);
-
-Cesium.knockout.getObservable(viewModel, 'thickThresholdData').subscribe(
-    function(newValue) {
-		if(postProcess.snowFalling.show){
-			postProcess.snowFalling.uniformValues.snowThick = parseFloat(newValue);
-		}
-    }
-);
-
-Cesium.knockout.getObservable(viewModel, 'windDirectionData').subscribe(
-    function(newValue) {
-		if(postProcess.snowFalling.show){
-			postProcess.snowFalling.uniformValues.windDirection = parseFloat(newValue);
-		}
-    }
-);
 
 
 // setup alternative terrain providers
@@ -229,28 +170,11 @@ Sandcastle.addDefaultToolbarMenu([{
 Sandcastle.addToolbarMenu([{
     text : 'No Snow',
     onselect : function() {
-        postProcess.snowFalling.show = false;
         viewer.scene.globe.material = undefined;
     }
-},  {
-    text : 'Snow',
-    onselect : function() {
-        postProcess.snowFalling.show = true;
-        viewer.scene.globe.material = Cesium.Material.fromType('Snow');
-        currentFrameNum = viewer.scene.frameState.frameNumber;
-        viewer.scene.globe.material.uniforms.u_accumulationStartTime = currentFrameNum;
-        currentFrameNum += 100.0;
-        viewer.scene.globe.material.uniforms.u_accumulationEndTime = currentFrameNum;
-        viewer.scene.globe.material.uniforms.u_level1normalMap = '../images/snowNormalMapLevel1.jpg';
-        viewer.scene.globe.material.uniforms.u_level2normalMap = '../images/snowNormalMapLevel2.jpg';
-        viewer.scene.globe.material.uniforms.u_level3normalMap = '../images/snowNormalMapLevel3.jpg';
-        viewer.scene.globe.material.uniforms.u_level4normalMap = '../images/snowNormalMapLevel4.jpg';
-        viewer.scene.globe.material.uniforms.u_level5normalMap = '../images/snowNormalMapLevel5.jpg';
-    }
-},  {
+}, {
     text : 'Snow On Ground',
     onselect : function() {
-        postProcess.snowFalling.show = false;
         viewer.scene.globe.material = Cesium.Material.fromType('Snow');
         currentFrameNum = viewer.scene.frameState.frameNumber;
         viewer.scene.globe.material.uniforms.u_accumulationStartTime = currentFrameNum;

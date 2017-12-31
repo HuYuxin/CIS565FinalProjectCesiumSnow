@@ -107,7 +107,6 @@ var viewModel = {
     textureOverlayShow: false,
     textureOverlayAlpha: 0.5,
     depthViewShow: false,
-    snowFallingShow : false,
     ambientOcclusionShow: false,
     fxaaShow: false
 };
@@ -131,7 +130,6 @@ function updatePostProcess() {
     postProcess.textureOverlay.show = Boolean(viewModel.textureOverlayShow);
     postProcess.textureOverlay.uniformValues.alpha = Number(viewModel.textureOverlayAlpha);
     postProcess.depthView.show = Boolean(viewModel.depthViewShow);
-    postProcess.snowFalling.show = Boolean(viewModel.snowFallingShow);
     postProcess.ambientOcclusion.show = Boolean(viewModel.ambientOcclusionShow);
     scene.fxaa = Boolean(viewModel.fxaaShow);
 }

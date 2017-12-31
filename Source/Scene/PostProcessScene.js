@@ -39,10 +39,6 @@ define([
          * @inheritdoc PostProcessLibrary#depthView
          */
         this.depthView = PostProcessLibrary.depthView;
-                /**
-         * @inheritdoc PostProcessLibrary#snowFalling
-         */
-        this.snowFalling = PostProcessLibrary.snowFalling;
         /**
          * @inheritdoc PostProcessLibrary#ambientOcclusion
          */
@@ -75,7 +71,6 @@ define([
             this.nightVision,
             this.textureOverlay,
             this.depthView,
-            this.snowFalling,
             this.ambientOcclusion,
             this.depthOfField,
             this.lensFlare,

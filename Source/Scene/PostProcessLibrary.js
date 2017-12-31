@@ -11,7 +11,6 @@ define([
         '../Shaders/PostProcessFilters/BlackAndWhite',
         '../Shaders/PostProcessFilters/Brightness',
         '../Shaders/PostProcessFilters/DepthView',
-        '../Shaders/PostProcessFilters/SnowFalling',
         '../Shaders/PostProcessFilters/EightBit',
         '../Shaders/PostProcessFilters/FXAA',
         '../Shaders/PostProcessFilters/LensFlare',
@@ -31,7 +30,6 @@ define([
         BlackAndWhite,
         Brightness,
         DepthView,
-        SnowFalling,
         EightBit,
         FXAAFS,
         LensFlare,
@@ -124,15 +122,6 @@ define([
         depthView : {
             get : function() {
                 return createDepthViewStage();
-            }
-        },
-
-        /**
-         *  @private
-         */
-        snowFalling : {
-            get : function() {
-                return createSnowFallingStage();
             }
         },
 
@@ -238,19 +227,6 @@ define([
     function createDepthViewStage() {
         return new PostProcessStage({
             fragmentShader : DepthView
-        });
-    }
-
-
-    function createSnowFallingStage() {
-        return new PostProcessStage({
-            fragmentShader : SnowFalling,
-            uniformValues : {
-                texture : buildModuleUrl('Assets/Textures/grayNoiseM.png'),
-                fallSpeed : 0.3,
-                snowThick : 0.3,
-                windDirection : 0.1
-            }
         });
     }
 
