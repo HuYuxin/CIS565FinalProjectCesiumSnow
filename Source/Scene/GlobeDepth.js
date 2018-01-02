@@ -8,14 +8,8 @@ define([
         '../Renderer/Framebuffer',
         '../Renderer/PixelDatatype',
         '../Renderer/RenderState',
-        '../Renderer/Sampler',
         '../Renderer/Texture',
-        '../Renderer/TextureWrap',
-        '../Renderer/TextureMagnificationFilter',
-        '../Renderer/TextureMinificationFilter',
-        '../shaders/PostProcessFilters/DepthViewPacked',
-        '../Shaders/PostProcessFilters/PassThrough',
-        '../Shaders/PostProcessFilters/PassThroughDepth'
+        '../Shaders/PostProcessFilters/PassThrough'
     ], function(
         BoundingRectangle,
         Color,
@@ -26,14 +20,8 @@ define([
         Framebuffer,
         PixelDatatype,
         RenderState,
-        Sampler,
         Texture,
-        TextureWrap,
-        TextureMagnificationFilter,
-        TextureMinificationFilter,
-        DepthViewPacked,
-        PassThrough,
-        PassThroughDepth) {
+        PassThrough) {
     'use strict';
 
     /**
@@ -62,9 +50,22 @@ define([
 
     function executeDebugGlobeDepth(globeDepth, context, passState) {
         if (!defined(globeDepth._debugGlobeDepthViewportCommand)) {
-            globeDepth._debugGlobeDepthViewportCommand = context.createViewportQuadCommand(DepthViewPacked, {
+            var fs =
+                'uniform sampler2D u_texture;\n' +
+                'varying vec2 v_textureCoordinates;\n' +
+                'void main()\n' +
+                '{\n' +
+                '    float z_window = czm_unpackDepth(texture2D(u_texture, v_textureCoordinates));\n' +
+                '    float n_range = czm_depthRange.near;\n' +
+                '    float f_range = czm_depthRange.far;\n' +
+                '    float z_ndc = (2.0 * z_window - n_range - f_range) / (f_range - n_range);\n' +
+                '    float scale = pow(z_ndc * 0.5 + 0.5, 8.0);\n' +
+                '    gl_FragColor = vec4(mix(vec3(0.0), vec3(1.0), scale), 1.0);\n' +
+                '}\n';
+
+            globeDepth._debugGlobeDepthViewportCommand = context.createViewportQuadCommand(fs, {
                 uniformMap : {
-                    u_depthTexture : function() {
+                    u_texture : function() {
                         return globeDepth._globeDepthTexture;
                     }
                 },
@@ -92,13 +93,7 @@ define([
             width : width,
             height : height,
             pixelFormat : PixelFormat.RGBA,
-            pixelDatatype : PixelDatatype.UNSIGNED_BYTE,
-            sampler : new Sampler({
-                wrapS : TextureWrap.CLAMP_TO_EDGE,
-                wrapT : TextureWrap.CLAMP_TO_EDGE,
-                minificationFilter : TextureMinificationFilter.NEAREST,
-                magnificationFilter : TextureMagnificationFilter.NEAREST
-            })
+            pixelDatatype : PixelDatatype.UNSIGNED_BYTE
         });
 
         globeDepth._depthStencilTexture = new Texture({
@@ -168,9 +163,16 @@ define([
         }
 
         if (!defined(globeDepth._copyDepthCommand)) {
-            globeDepth._copyDepthCommand = context.createViewportQuadCommand(PassThroughDepth, {
+            var fs =
+                'uniform sampler2D u_texture;\n' +
+                'varying vec2 v_textureCoordinates;\n' +
+                'void main()\n' +
+                '{\n' +
+                '    gl_FragColor = czm_packDepth(texture2D(u_texture, v_textureCoordinates).r);\n' +
+                '}\n';
+            globeDepth._copyDepthCommand = context.createViewportQuadCommand(fs, {
                 uniformMap : {
-                    u_depthTexture : function() {
+                    u_texture : function() {
                         return globeDepth._depthStencilTexture;
                     }
                 },
@@ -183,7 +185,7 @@ define([
         if (!defined(globeDepth._copyColorCommand)) {
             globeDepth._copyColorCommand = context.createViewportQuadCommand(PassThrough, {
                 uniformMap : {
-                    u_colorTexture : function() {
+                    u_texture : function() {
                         return globeDepth._colorTexture;
                     }
                 },

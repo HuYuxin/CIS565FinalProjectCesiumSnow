@@ -157,13 +157,13 @@ define([
             var sigma = 2.0;
 
             uniformMap = {
-                u_delta : function() {
+                delta : function() {
                     return delta;
                 },
-                u_sigma : function() {
+                sigma : function() {
                     return sigma;
                 },
-                u_direction : function() {
+                direction : function() {
                     return 0.0;
                 }
             };
@@ -174,13 +174,13 @@ define([
             });
 
             uniformMap = {
-                u_delta : function() {
+                delta : function() {
                     return delta;
                 },
-                u_sigma : function() {
+                sigma : function() {
                     return sigma;
                 },
-                u_direction : function() {
+                direction : function() {
                     return 1.0;
                 }
             };
@@ -290,7 +290,7 @@ define([
                 viewport : downSampleViewport
             });
 
-            this._downSampleCommand.uniformMap.u_colorTexture = function() {
+            this._downSampleCommand.uniformMap.u_texture = function() {
                 return fbo.getColorTexture(0);
             };
             this._downSampleCommand.renderState = downSampleRenderState;
@@ -300,7 +300,7 @@ define([
             };
             this._brightPassCommand.renderState = downSampleRenderState;
 
-            this._blurXCommand.uniformMap.u_colorTexture = function() {
+            this._blurXCommand.uniformMap.u_texture = function() {
                 return that._downSampleFBO2.getColorTexture(0);
             };
             this._blurXCommand.uniformMap.u_step = function() {
@@ -308,7 +308,7 @@ define([
             };
             this._blurXCommand.renderState = downSampleRenderState;
 
-            this._blurYCommand.uniformMap.u_colorTexture = function() {
+            this._blurYCommand.uniformMap.u_texture = function() {
                 return that._downSampleFBO1.getColorTexture(0);
             };
             this._blurYCommand.uniformMap.u_step = function() {
@@ -330,7 +330,7 @@ define([
             };
             this._blendCommand.renderState = upSampleRenderState;
 
-            this._fullScreenCommand.uniformMap.u_colorTexture = function() {
+            this._fullScreenCommand.uniformMap.u_texture = function() {
                 return fbo.getColorTexture(0);
             };
             this._fullScreenCommand.renderState = upSampleRenderState;
