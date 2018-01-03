@@ -224,7 +224,6 @@ if(!isOcean){
          float specularIntensity = clamp(czm_getSpecular(normalize(czm_sunDirectionEC), normalize(-v_positionEC), normalize(normalWithNoise), shiness), 0.0, 1.0);
          diffuseIntensity = clamp(czm_getLambertDiffuse(czm_sunDirectionEC, normalize(normalWithNoise)) * 0.9 + 0.3, 0.0, 1.0);
          finalColor = vec4(color.rgb * diffuseIntensity*0.8  + specular*specularIntensity*0.2, color.a);
-         //finalColor = vec4(color.rgb * diffuseIntensity, color.a);
     }else{
          finalColor = vec4(color.rgb * diffuseIntensity, color.a);
     }
