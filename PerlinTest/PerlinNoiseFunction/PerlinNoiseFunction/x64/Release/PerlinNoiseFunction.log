@@ -1,9 +1,0 @@
-﻿  Source.cpp
-Source.cpp(71): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-  Generating code
-  4 of 137 functions ( 2.9%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-  PerlinNoiseFunction.vcxproj -> C:\Users\akhabbaz\gitProjects\CIS565FinalProjectCesiumSnow\PerlinTest\PerlinNoiseFunction\x64\Release\PerlinNoiseFunction.exe
-  PerlinNoiseFunction.vcxproj -> C:\Users\akhabbaz\gitProjects\CIS565FinalProjectCesiumSnow\PerlinTest\PerlinNoiseFunction\x64\Release\PerlinNoiseFunction.pdb (Full PDB)

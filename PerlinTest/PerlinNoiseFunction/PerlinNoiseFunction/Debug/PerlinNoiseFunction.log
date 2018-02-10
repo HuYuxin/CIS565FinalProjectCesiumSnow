@@ -1,4 +1,0 @@
-﻿  Source.cpp
-c:\users\akhabbaz\gitprojects\cis565finalprojectcesiumsnow\perlintest\perlinnoisefunction\perlinnoisefunction\source.cpp(69): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-  PerlinNoiseFunction.vcxproj -> C:\Users\akhabbaz\gitProjects\CIS565FinalProjectCesiumSnow\PerlinTest\PerlinNoiseFunction\Debug\PerlinNoiseFunction.exe
-  PerlinNoiseFunction.vcxproj -> C:\Users\akhabbaz\gitProjects\CIS565FinalProjectCesiumSnow\PerlinTest\PerlinNoiseFunction\Debug\PerlinNoiseFunction.pdb (Partial PDB)
